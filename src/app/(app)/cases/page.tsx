@@ -5,10 +5,12 @@ import { GlassCard } from '@/components/shared/glass-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Search, SlidersHorizontal, PlusCircle } from 'lucide-react';
 import Image from 'next/image';
 
-const medicalCases = [
+const initialMedicalCases = [
   {
     id: 1,
     title: 'Caso Complexo de Rinoplastia Revisional',
@@ -72,13 +74,43 @@ const statusColors: { [key: string]: string } = {
 };
 
 export default function CasesPage() {
+  const [medicalCases, setMedicalCases] = useState(initialMedicalCases);
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('all');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Form state for the new case
+  const [newCaseTitle, setNewCaseTitle] = useState('');
+  const [newCaseSpecialty, setNewCaseSpecialty] = useState('');
+  const [newCaseImageUrl, setNewCaseImageUrl] = useState('');
+
 
   const filteredCases = medicalCases.filter(c => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (specialtyFilter === 'all' || c.specialty === specialtyFilter)
   );
+
+  const handleAddCase = () => {
+    if (!newCaseTitle || !newCaseSpecialty) return;
+    
+    const newCase = {
+      id: medicalCases.length + 1,
+      title: newCaseTitle,
+      specialty: newCaseSpecialty,
+      submittedBy: 'Dr. Robério', // Assuming the logged-in user
+      status: 'Em Análise',
+      imageUrl: newCaseImageUrl || 'https://placehold.co/600x400',
+      imageHint: 'new case',
+    };
+
+    setMedicalCases([newCase, ...medicalCases]);
+    
+    // Reset form and close dialog
+    setNewCaseTitle('');
+    setNewCaseSpecialty('');
+    setNewCaseImageUrl('');
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="w-full">
@@ -117,10 +149,52 @@ export default function CasesPage() {
             <SlidersHorizontal className="w-5 h-5 mr-2" />
             Filtros
           </Button>
-           <Button className="h-12 w-full md:w-auto px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
-            <PlusCircle className="w-5 h-5 mr-2" />
-            Novo Caso
-          </Button>
+           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+               <Button className="h-12 w-full md:w-auto px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
+                <PlusCircle className="w-5 h-5 mr-2" />
+                Novo Caso
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="glass-pane max-w-lg">
+                <DialogHeader>
+                    <DialogTitle className="text-white/90 text-2xl font-light">Submeter Novo Caso Clínico</DialogTitle>
+                    <DialogDescription className="text-white/50 font-extralight pt-1">
+                        Preencha os detalhes abaixo. O caso será enviado para revisão.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-6 py-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="title" className="text-white/70">Título do Caso</Label>
+                        <Input id="title" value={newCaseTitle} onChange={e => setNewCaseTitle(e.target.value)} className="glass-input h-11" />
+                    </div>
+                    <div className="grid gap-2">
+                         <Label htmlFor="specialty" className="text-white/70">Especialidade</Label>
+                        <Select onValueChange={setNewCaseSpecialty}>
+                            <SelectTrigger className="w-full h-11 glass-input">
+                                <SelectValue placeholder="Selecione a especialidade" />
+                            </SelectTrigger>
+                            <SelectContent className="glass-pane">
+                                <SelectItem value="Rinoplastia">Rinoplastia</SelectItem>
+                                <SelectItem value="Mamoplastia">Mamoplastia</SelectItem>
+                                <SelectItem value="Blefaroplastia">Blefaroplastia</SelectItem>
+                                <SelectItem value="Lifting">Lifting</SelectItem>
+                                <SelectItem value="Outros">Outros</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="imageUrl" className="text-white/70">URL da Imagem (Opcional)</Label>
+                        <Input id="imageUrl" placeholder="https://..." value={newCaseImageUrl} onChange={e => setNewCaseImageUrl(e.target.value)} className="glass-input h-11" />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleAddCase} className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base">
+                        Enviar para Análise
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+           </Dialog>
         </div>
       </GlassCard>
 
@@ -131,7 +205,7 @@ export default function CasesPage() {
               <Image 
                 src={c.imageUrl} 
                 alt={c.title}
-                layout="fill"
+                fill
                 objectFit="cover"
                 className="opacity-70 group-hover:opacity-100 transition-opacity duration-300"
                 data-ai-hint={c.imageHint}
