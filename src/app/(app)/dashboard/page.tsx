@@ -1,5 +1,7 @@
+'use client';
+
 import { GlassCard } from '@/components/shared/glass-card';
-import { Users, FileText, BookOpen, PlusCircle, Library, PlayCircle, Download, Archive, ArrowRight } from 'lucide-react';
+import { Users, FileText, BookOpen, PlusCircle, Library, PlayCircle, Download, Archive, ArrowRight, MessageSquare, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -50,7 +52,7 @@ export default function DashboardPage() {
       title: 'Materiais',
       subtitle: 'Downloads e recursos',
       icon: Download,
-      href: '/archive', // Assuming this links to archive for now
+      href: '/archive', 
       color: 'text-yellow-400'
     },
     {
@@ -59,6 +61,37 @@ export default function DashboardPage() {
       icon: Archive,
       href: '/archive',
       color: 'text-indigo-400'
+    }
+  ];
+
+  const recentActivities = [
+    {
+      type: 'NOVO CASO',
+      description: 'Dr. Lucas Martins submeteu um novo caso: "Mamoplastia de Aumento com Prótese de Silicone".',
+      time: '2 horas atrás',
+      icon: FileText,
+      color: 'text-purple-400',
+    },
+    {
+      type: 'COMENTÁRIO',
+      description: 'Dr. Ana Couto comentou no caso "Rinoplastia Secundária".',
+      time: '5 horas atrás',
+      icon: MessageSquare,
+      color: 'text-cyan-400',
+    },
+    {
+      type: 'ARTIGO',
+      description: 'Novo artigo publicado na biblioteca: "Técnicas Avançadas em Blefaroplastia".',
+      time: '1 dia atrás',
+      icon: BookOpen,
+      color: 'text-blue-400',
+    },
+     {
+      type: 'MENTORIA',
+      description: 'A gravação da "Masterclass: Lifting Facial Profundo" está disponível.',
+      time: '2 dias atrás',
+      icon: PlayCircle,
+      color: 'text-orange-400',
     }
   ];
 
@@ -72,6 +105,7 @@ export default function DashboardPage() {
           Aqui está o seu resumo de hoje.
         </p>
       </header>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stats.map((stat) => (
           <GlassCard key={stat.title}>
@@ -88,23 +122,42 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {navCards.map((card) => (
             <Link href={card.href} key={card.title}>
-                <GlassCard interactive={true} className="h-full">
-                    <div className="flex flex-col items-start justify-between h-full">
-                        <div>
-                            <div className={`p-3 rounded-full bg-white/10 mb-4 inline-block`}>
-                                <card.icon className={`w-7 h-7 ${card.color}`} />
-                            </div>
-                            <h3 className="text-lg font-medium text-white/95">{card.title}</h3>
-                            <p className="text-sm font-extralight text-white/60">{card.subtitle}</p>
+                <GlassCard interactive={true} className="h-full p-4">
+                    <div className="flex flex-col items-start justify-between h-full text-center mx-auto items-center">
+                        <div className={`p-3 rounded-full bg-white/10 mb-3 inline-block`}>
+                            <card.icon className={`w-6 h-6 ${card.color}`} />
                         </div>
-                        <ArrowRight className="w-5 h-5 text-white/30 self-end mt-4" />
+                        <h3 className="text-sm font-medium text-white/95">{card.title}</h3>
+                        <p className="text-xs font-extralight text-white/60">{card.subtitle}</p>
                     </div>
                 </GlassCard>
             </Link>
         ))}
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-light text-white/90 tracking-wide mb-6">Atividade Recente</h2>
+        <GlassCard>
+            <div className="space-y-6">
+                {recentActivities.map((activity, index) => (
+                    <div key={index} className="flex items-start gap-4">
+                        <div className={`p-2.5 rounded-full bg-white/5 border border-white/10`}>
+                            <activity.icon className={`w-5 h-5 ${activity.color}`} />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex justify-between items-center">
+                                <p className={`text-xs font-bold tracking-wider uppercase ${activity.color}`}>{activity.type}</p>
+                                <p className="text-xs text-white/40">{activity.time}</p>
+                            </div>
+                            <p className="text-sm text-white/80 mt-1">{activity.description}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </GlassCard>
       </div>
     </div>
   );
