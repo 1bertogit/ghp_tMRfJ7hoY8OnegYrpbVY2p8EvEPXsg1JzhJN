@@ -81,6 +81,53 @@ const statusColors: { [key: string]: string } = {
   'Requer Revisão': 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30',
 };
 
+// Helper function to convert image URL to data URI
+async function toDataUri(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+        // Attempt to use a proxy for CORS issues
+        const proxyResponse = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+        if(!proxyResponse.ok) throw new Error(`Failed to fetch image from ${url} and proxy`);
+        
+        const blob = await proxyResponse.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error converting image to data URI:", error);
+    // Fallback or error handling. For simplicity, we return null.
+    // In a real app, you might want to inform the user.
+    try {
+        const proxyResponse = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+        if(!proxyResponse.ok) throw new Error(`Failed to fetch image from ${url} and proxy`);
+        
+        const blob = await proxyResponse.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (proxyError) {
+         console.error("Error converting image to data URI via proxy:", proxyError);
+         return null;
+    }
+  }
+}
+
+
 export default function CasesPage() {
   const [medicalCases, setMedicalCases] = useState(initialMedicalCases);
   const [searchTerm, setSearchTerm] = useState('');
@@ -105,11 +152,12 @@ export default function CasesPage() {
     setIsAnalyzing(true);
     
     try {
+        const imageDataUri = newCaseImageUrl ? await toDataUri(newCaseImageUrl) : null;
+        
         const analysisInput: AnalyzeCaseInput = {
             title: newCaseTitle,
             specialty: newCaseSpecialty,
-            // In a real app, you would handle image uploads and get a data URI
-            imageDataUri: null 
+            imageDataUri: imageDataUri,
         };
 
         const result = await analyzeCase(analysisInput);
