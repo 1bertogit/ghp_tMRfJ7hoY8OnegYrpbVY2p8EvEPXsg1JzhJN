@@ -3,26 +3,15 @@
  * @fileOverview An AI flow to analyze medical cases.
  *
  * - analyzeCase - A function that handles the case analysis process.
- * - AnalyzeCaseInput - The input type for the analyzeCase function.
- * - AnalyzeCaseOutput - The return type for the analyzeCase function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'zod';
-
-// Define the schema for the input of the case analysis flow
-export const AnalyzeCaseInputSchema = z.object({
-  title: z.string().describe('The title of the medical case.'),
-  specialty: z.string().describe('The medical specialty of the case.'),
-  imageDataUri: z.string().nullable().describe("An optional photo of the case, as a data URI. Format: 'data:<mimetype>;base64,<encoded_data>'."),
-});
-export type AnalyzeCaseInput = z.infer<typeof AnalyzeCaseInputSchema>;
-
-// Define the schema for the output of the case analysis flow
-export const AnalyzeCaseOutputSchema = z.object({
-  analysis: z.string().describe('A brief, expert analysis of the case, written from the perspective of a senior plastic surgeon.'),
-});
-export type AnalyzeCaseOutput = z.infer<typeof AnalyzeCaseOutputSchema>;
+import {
+  AnalyzeCaseInput,
+  AnalyzeCaseInputSchema,
+  AnalyzeCaseOutput,
+  AnalyzeCaseOutputSchema,
+} from '@/ai/schemas/case-analysis';
 
 
 /**

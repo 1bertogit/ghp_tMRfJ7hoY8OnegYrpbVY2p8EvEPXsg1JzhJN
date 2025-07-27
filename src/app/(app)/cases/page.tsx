@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from '@/components/ui/label';
 import { Search, SlidersHorizontal, PlusCircle, Bot } from 'lucide-react';
 import Image from 'next/image';
-import { analyzeCase, AnalyzeCaseInput } from '@/ai/flows/analyze-case-flow';
+import { analyzeCase } from '@/ai/flows/analyze-case-flow';
+import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
 
 const initialMedicalCases = [
   {
