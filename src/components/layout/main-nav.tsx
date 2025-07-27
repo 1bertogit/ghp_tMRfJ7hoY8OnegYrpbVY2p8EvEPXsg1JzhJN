@@ -15,12 +15,12 @@ import {
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/cases', label: 'Medical Cases', icon: FileText },
-  { href: '/library', label: 'Scientific Library', icon: BookOpen },
-  { href: '/archive', label: 'Historical Archive', icon: Archive },
-  { href: '/calendar', label: 'Events Calendar', icon: Calendar },
-  { href: '/classes', label: 'Recorded Classes', icon: Video },
-  { href: '/admin', label: 'Admin Panel', icon: Shield },
+  { href: '/cases', label: 'Casos Médicos', icon: FileText },
+  { href: '/library', label: 'Biblioteca Científica', icon: BookOpen },
+  { href: '/archive', label: 'Arquivo Histórico', icon: Archive },
+  { href: '/calendar', label: 'Calendário de Eventos', icon: Calendar },
+  { href: '/classes', label: 'Aulas Gravadas', icon: Video },
+  { href: '/admin', label: 'Painel Administrativo', icon: Shield },
 ];
 
 export function MainNav() {

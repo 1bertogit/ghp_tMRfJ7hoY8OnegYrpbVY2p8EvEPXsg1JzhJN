@@ -4,19 +4,19 @@ import { Users, FileText, BookOpen } from 'lucide-react';
 export default function DashboardPage() {
   const stats = [
     {
-      title: 'Active Students',
+      title: 'Alunos Ativos',
       value: '48',
       icon: Users,
       color: 'text-cyan-400',
     },
     {
-      title: 'Cases in Analysis',
+      title: 'Casos em Análise',
       value: '12',
       icon: FileText,
       color: 'text-purple-400',
     },
     {
-      title: 'Published Articles',
+      title: 'Artigos Publicados',
       value: '6',
       icon: BookOpen,
       color: 'text-blue-400',
@@ -27,10 +27,10 @@ export default function DashboardPage() {
     <div className="w-full">
       <header className="mb-8">
         <h1 className="text-4xl font-light text-white/90 tracking-wider">
-          Good evening, Dr. Robério
+          Boa noite, Dr. Robério
         </h1>
         <p className="text-lg font-extralight text-white/50 mt-1">
-          Here is your summary for today.
+          Aqui está o seu resumo de hoje.
         </p>
       </header>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -48,8 +48,8 @@ export default function DashboardPage() {
           </GlassCard>
         ))}
         <GlassCard className="lg:col-span-3" interactive={false}>
-            <h2 className="text-2xl font-light text-white/90 mb-4">Recent Activity</h2>
-            <p className="text-md font-extralight text-white/50">Activity feed coming soon...</p>
+            <h2 className="text-2xl font-light text-white/90 mb-4">Atividade Recente</h2>
+            <p className="text-md font-extralight text-white/50">O feed de atividades estará disponível em breve...</p>
         </GlassCard>
       </div>
     </div>
