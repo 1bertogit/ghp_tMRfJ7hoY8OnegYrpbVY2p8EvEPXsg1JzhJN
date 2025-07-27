@@ -1,8 +1,62 @@
 'use client';
 
 import { GlassCard } from '@/components/shared/glass-card';
-import { Users, FileText, BookOpen, PlusCircle, Library, PlayCircle, Download, Archive, ArrowRight, MessageSquare, Edit } from 'lucide-react';
+import { Users, FileText, BookOpen, PlusCircle, Library, PlayCircle, Download, Archive, ArrowRight, MessageSquare, Edit, Calendar, Clock, Bell } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+// Dados dos eventos (simulando dados que viriam de uma API)
+const eventsData = [
+  {
+    id: 1,
+    title: 'Masterclass: Blefaroplastia Avançada',
+    type: 'Masterclass',
+    date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 dias a partir de agora
+  },
+  {
+    id: 2,
+    title: 'Discussão de Caso Clínico: Rinoplastia Secundária',
+    type: 'Reunião de Caso',
+    date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 dias a partir de agora
+  },
+];
+
+
+const calculateTimeLeft = (targetDate: string) => {
+    const difference = +new Date(targetDate) - +new Date();
+    let timeLeft = {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    };
+
+    if (difference > 0) {
+        timeLeft = {
+            days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((difference / 1000 / 60) % 60),
+            seconds: Math.floor((difference / 1000) % 60)
+        };
+    }
+
+    return timeLeft;
+};
+
+const formatEventDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+    });
+};
+
+const formatEventTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+};
+
 
 export default function DashboardPage() {
   const stats = [
@@ -95,6 +149,30 @@ export default function DashboardPage() {
     }
   ];
 
+  const [nextEvent, setNextEvent] = useState<any>(null);
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(''));
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    // Ordena os eventos e pega o próximo
+    const sortedEvents = [...eventsData]
+      .filter(event => new Date(event.date) > new Date())
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    if (sortedEvents.length > 0) {
+      const upcomingEvent = sortedEvents[0];
+      setNextEvent(upcomingEvent);
+      setTimeLeft(calculateTimeLeft(upcomingEvent.date));
+      
+      const timer = setInterval(() => {
+        setTimeLeft(calculateTimeLeft(upcomingEvent.date));
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, []);
+
   return (
     <div className="w-full">
       <header className="mb-8">
@@ -105,6 +183,53 @@ export default function DashboardPage() {
           Aqui está o seu resumo de hoje.
         </p>
       </header>
+
+      {isClient && nextEvent && (
+        <GlassCard className="mb-8 p-0 overflow-hidden" interactive={true}>
+          <Link href="/calendar">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="p-6 bg-cyan-500/10 flex items-center justify-center self-stretch">
+                 <Bell className="w-8 h-8 text-cyan-400" />
+              </div>
+              <div className="p-6 flex-grow">
+                <p className="text-sm font-medium text-cyan-400">LEMBRETE: PRÓXIMA {nextEvent.type.toUpperCase()}</p>
+                <h3 className="text-lg font-medium text-white/95 mt-1">{nextEvent.title}</h3>
+                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/60 mt-2">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{formatEventDate(nextEvent.date)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        <span>{formatEventTime(nextEvent.date)}</span>
+                    </div>
+                </div>
+              </div>
+              <div className="p-6 border-t md:border-t-0 md:border-l border-white/10 w-full md:w-auto">
+                <div className="flex justify-around md:flex-col gap-4 text-center">
+                    <div>
+                        <p className="text-3xl font-semibold text-white">{String(timeLeft.days).padStart(2, '0')}</p>
+                        <p className="text-xs text-white/50">DIAS</p>
+                    </div>
+                    <div>
+                        <p className="text-3xl font-semibold text-white">{String(timeLeft.hours).padStart(2, '0')}</p>
+                        <p className="text-xs text-white/50">HORAS</p>
+                    </div>
+                    <div>
+                        <p className="text-3xl font-semibold text-white">{String(timeLeft.minutes).padStart(2, '0')}</p>
+
+                        <p className="text-xs text-white/50">MIN</p>
+                    </div>
+                    <div>
+                        <p className="text-3xl font-semibold text-white">{String(timeLeft.seconds).padStart(2, '0')}</p>
+                        <p className="text-xs text-white/50">SEG</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </GlassCard>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stats.map((stat) => (
