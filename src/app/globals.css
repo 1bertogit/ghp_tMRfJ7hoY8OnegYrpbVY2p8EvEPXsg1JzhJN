@@ -4,8 +4,30 @@
 
 @layer base {
   :root {
-    --background: 240 21% 6%;
-    --foreground: 0 0% 98%;
+    /* Vision Pro Color Palette */
+    /* Environment */
+    --vp-bg-primary: 240 21% 4%; /* #0a0a0f */
+    --vp-bg-secondary: 220 14% 3%; /* #050507 */
+    --vp-bg-accent: 210 100% 8% 0.1; /* rgba(0, 20, 40, 0.1) */
+
+    /* Glass Materials */
+    --vp-glass-1: 0 0% 100% 0.02;
+    --vp-glass-2: 0 0% 100% 0.04;
+    --vp-glass-3: 0 0% 100% 0.06;
+    --vp-glass-4: 0 0% 100% 0.08;
+    --vp-glass-5: 0 0% 100% 0.10;
+    --vp-glass-6: 0 0% 100% 0.12;
+    --vp-glass-7: 0 0% 100% 0.15;
+    --vp-glass-8: 0 0% 100% 0.18;
+    
+    /* Text */
+    --vp-text-primary: 0 0% 100% 0.95;
+    --vp-text-secondary: 0 0% 100% 0.70;
+    --vp-text-tertiary: 0 0% 100% 0.50;
+    
+    /* ShadCN Theme */
+    --background: var(--vp-bg-primary);
+    --foreground: var(--vp-text-primary);
 
     --card: 240 21% 6%;
     --card-foreground: 0 0% 98%;
@@ -28,8 +50,8 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 100% 0.1;
+    --input: 0 0% 100% 0.05;
     --ring: 0 0% 83.1%;
     
     --radius: 0.5rem;
@@ -42,6 +64,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

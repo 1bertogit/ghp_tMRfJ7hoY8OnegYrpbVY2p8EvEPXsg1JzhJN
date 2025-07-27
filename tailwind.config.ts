@@ -59,8 +59,8 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         '2xl': 'calc(var(--radius) * 2)',
-        '3xl': 'calc(var(--radius) * 4)',
-        '4xl': 'calc(var(--radius) * 6)',
+        '3xl': '24px',
+        '4xl': '32px',
       },
        blur: {
         xs: '8px',
