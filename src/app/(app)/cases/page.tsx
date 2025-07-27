@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, PlusCircle } from 'lucide-react';
+import { Search, SlidersHorizontal, PlusCircle, Bot } from 'lucide-react';
 import Image from 'next/image';
+import { analyzeCase, AnalyzeCaseInput } from '@/ai/flows/analyze-case-flow';
 
 const initialMedicalCases = [
   {
@@ -18,7 +19,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Ana Couto',
     status: 'Em Análise',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgery nose'
+    imageHint: 'surgery nose',
+    analysis: null,
   },
   {
     id: 2,
@@ -27,7 +29,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Lucas Martins',
     status: 'Aprovado',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgery breast'
+    imageHint: 'surgery breast',
+    analysis: 'O planejamento pré-operatório foi excelente, com boa escolha do implante. A técnica de inserção dual-plane garantiu um resultado natural e simétrico. Recomendo atenção ao acompanhamento pós-operatório para monitorar a contratura capsular.',
   },
   {
     id: 3,
@@ -36,7 +39,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Sofia Ferreira',
     status: 'Aprovado',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgery eye'
+    imageHint: 'surgery eye',
+    analysis: null,
   },
   {
     id: 4,
@@ -45,7 +49,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Carlos Andrade',
     status: 'Em Análise',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgery face'
+    imageHint: 'surgery face',
+    analysis: null,
   },
   {
     id: 5,
@@ -54,7 +59,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Gabriela Lima',
     status: 'Aprovado',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'rhinoplasty surgery'
+    imageHint: 'rhinoplasty surgery',
+    analysis: 'Excelente reconstrução da estrutura nasal. O uso de enxertos cartilaginosos foi preciso e garantiu a funcionalidade respiratória. As proporções faciais foram respeitadas, resultando em um perfil harmonioso.',
   },
   {
     id: 6,
@@ -63,7 +69,8 @@ const initialMedicalCases = [
     submittedBy: 'Dr. Pedro Almeida',
     status: 'Requer Revisão',
     imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'mastectomy reconstruction'
+    imageHint: 'mastectomy reconstruction',
+    analysis: 'A técnica de retalho DIEP foi bem executada, mas a simetrização com a mama contralateral pode ser aprimorada em um segundo tempo cirúrgico. Sugiro avaliação do complexo areolopapilar.',
   },
 ];
 
@@ -78,6 +85,7 @@ export default function CasesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Form state for the new case
   const [newCaseTitle, setNewCaseTitle] = useState('');
@@ -90,26 +98,44 @@ export default function CasesPage() {
     (specialtyFilter === 'all' || c.specialty === specialtyFilter)
   );
 
-  const handleAddCase = () => {
+  const handleAddCase = async () => {
     if (!newCaseTitle || !newCaseSpecialty) return;
     
-    const newCase = {
-      id: medicalCases.length + 1,
-      title: newCaseTitle,
-      specialty: newCaseSpecialty,
-      submittedBy: 'Dr. Robério', // Assuming the logged-in user
-      status: 'Em Análise',
-      imageUrl: newCaseImageUrl || 'https://placehold.co/600x400',
-      imageHint: 'new case',
-    };
-
-    setMedicalCases([newCase, ...medicalCases]);
+    setIsAnalyzing(true);
     
-    // Reset form and close dialog
-    setNewCaseTitle('');
-    setNewCaseSpecialty('');
-    setNewCaseImageUrl('');
-    setIsDialogOpen(false);
+    try {
+        const analysisInput: AnalyzeCaseInput = {
+            title: newCaseTitle,
+            specialty: newCaseSpecialty,
+            // In a real app, you would handle image uploads and get a data URI
+            imageDataUri: null 
+        };
+
+        const result = await analyzeCase(analysisInput);
+
+        const newCase = {
+            id: medicalCases.length + 1,
+            title: newCaseTitle,
+            specialty: newCaseSpecialty,
+            submittedBy: 'Dr. Robério', // Assuming the logged-in user
+            status: 'Em Análise' as const,
+            imageUrl: newCaseImageUrl || 'https://placehold.co/600x400',
+            imageHint: 'new case',
+            analysis: result.analysis,
+        };
+
+        setMedicalCases([newCase, ...medicalCases]);
+    } catch (error) {
+        console.error('Failed to analyze case:', error);
+        // Handle error, e.g., show a toast message
+    } finally {
+        setIsAnalyzing(false);
+        // Reset form and close dialog
+        setNewCaseTitle('');
+        setNewCaseSpecialty('');
+        setNewCaseImageUrl('');
+        setIsDialogOpen(false);
+    }
   };
 
   return (
@@ -160,7 +186,7 @@ export default function CasesPage() {
                 <DialogHeader>
                     <DialogTitle className="text-white/90 text-2xl font-light">Submeter Novo Caso Clínico</DialogTitle>
                     <DialogDescription className="text-white/50 font-extralight pt-1">
-                        Preencha os detalhes abaixo. O caso será enviado para revisão.
+                        Preencha os detalhes abaixo. O caso será enviado para revisão e análise por IA.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-6 py-4">
@@ -189,8 +215,12 @@ export default function CasesPage() {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleAddCase} className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base">
-                        Enviar para Análise
+                    <Button 
+                        onClick={handleAddCase} 
+                        className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base"
+                        disabled={isAnalyzing}
+                    >
+                        {isAnalyzing ? 'Analisando com IA...' : 'Enviar para Análise'}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -219,9 +249,20 @@ export default function CasesPage() {
             <div className="p-6 flex flex-col flex-grow">
               <p className="text-sm font-medium text-cyan-400 mb-1">{c.specialty}</p>
               <h3 className="text-lg font-medium text-white/90 flex-grow">{c.title}</h3>
-              <p className="text-sm font-light text-white/50 mt-4">
+              <p className="text-sm font-light text-white/50 mt-4 mb-4">
                 Enviado por: {c.submittedBy}
               </p>
+              {c.analysis && (
+                <div className="mt-auto pt-4 border-t border-white/10 bg-white/5 p-4 rounded-xl -m-2">
+                   <div className="flex items-center gap-2 mb-2">
+                     <Bot className="w-5 h-5 text-purple-400" />
+                     <p className="text-sm font-medium text-purple-300">Análise do Dr. Genkit</p>
+                   </div>
+                   <p className="text-sm font-extralight text-white/70 leading-relaxed">
+                     {c.analysis}
+                   </p>
+                </div>
+              )}
             </div>
           </GlassCard>
         ))}
