@@ -1,5 +1,6 @@
 import { GlassCard } from '@/components/shared/glass-card';
-import { Users, FileText, BookOpen, MessageSquare, ArrowRight } from 'lucide-react';
+import { Users, FileText, BookOpen, PlusCircle, Library, PlayCircle, Download, Archive, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const stats = [
@@ -23,25 +24,42 @@ export default function DashboardPage() {
     },
   ];
 
-  const recentActivities = [
+  const navCards = [
     {
-        icon: FileText,
-        description: 'Novo caso de Rinoplastia enviado por Dr. Ana Couto.',
-        time: '2 horas atrás',
-        color: 'text-purple-400'
+      title: 'Novo Caso',
+      subtitle: 'Compartilhar experiência',
+      icon: PlusCircle,
+      href: '/cases',
+      color: 'text-green-400'
     },
     {
-        icon: BookOpen,
-        description: 'Novo artigo sobre "Técnicas Avançadas de Lifting" adicionado à biblioteca.',
-        time: 'Ontem',
-        color: 'text-blue-400'
+      title: 'Biblioteca',
+      subtitle: 'Artigos científicos',
+      icon: Library,
+      href: '/library',
+      color: 'text-blue-400'
     },
     {
-        icon: MessageSquare,
-        description: 'Dr. Ricardo comentou no caso de Blefaroplastia #32.',
-        time: '3 dias atrás',
-        color: 'text-cyan-400'
+      title: 'Gravações',
+      subtitle: 'Aulas e mentorias',
+      icon: PlayCircle,
+      href: '/classes',
+      color: 'text-orange-400'
     },
+    {
+      title: 'Materiais',
+      subtitle: 'Downloads e recursos',
+      icon: Download,
+      href: '/archive', // Assuming this links to archive for now
+      color: 'text-yellow-400'
+    },
+    {
+      title: 'Acervo WhatsApp',
+      subtitle: 'Histórico organizado',
+      icon: Archive,
+      href: '/archive',
+      color: 'text-indigo-400'
+    }
   ];
 
   return (
@@ -56,10 +74,10 @@ export default function DashboardPage() {
       </header>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stats.map((stat) => (
-          <GlassCard key={stat.title} interactive={true}>
+          <GlassCard key={stat.title}>
             <div className="flex items-center space-x-4">
-              <div className={`p-3 rounded-full bg-white/10 ${stat.color}`}>
-                <stat.icon className="w-8 h-8" />
+              <div className={`p-3 rounded-full bg-white/10`}>
+                <stat.icon className={`w-8 h-8 ${stat.color}`} />
               </div>
               <div>
                 <p className="text-sm font-light text-white/70">{stat.title}</p>
@@ -68,23 +86,25 @@ export default function DashboardPage() {
             </div>
           </GlassCard>
         ))}
-        <GlassCard className="lg:col-span-3" interactive={false}>
-            <h2 className="text-2xl font-light text-white/90 mb-6">Atividade Recente</h2>
-            <div className="space-y-6">
-                {recentActivities.map((activity, index) => (
-                    <div key={index} className="flex items-start gap-4 group">
-                        <div className={`mt-1 p-2 bg-white/5 rounded-full border border-white/10 ${activity.color}`}>
-                            <activity.icon className="w-5 h-5" />
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+        {navCards.map((card) => (
+            <Link href={card.href} key={card.title}>
+                <GlassCard interactive={true} className="h-full">
+                    <div className="flex flex-col items-start justify-between h-full">
+                        <div>
+                            <div className={`p-3 rounded-full bg-white/10 mb-4 inline-block`}>
+                                <card.icon className={`w-7 h-7 ${card.color}`} />
+                            </div>
+                            <h3 className="text-lg font-medium text-white/95">{card.title}</h3>
+                            <p className="text-sm font-extralight text-white/60">{card.subtitle}</p>
                         </div>
-                        <div className="flex-1">
-                            <p className="text-base font-light text-white/80">{activity.description}</p>
-                            <p className="text-sm font-extralight text-white/50">{activity.time}</p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-white/30 self-center transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white/60" />
+                        <ArrowRight className="w-5 h-5 text-white/30 self-end mt-4" />
                     </div>
-                ))}
-            </div>
-        </GlassCard>
+                </GlassCard>
+            </Link>
+        ))}
       </div>
     </div>
   );
