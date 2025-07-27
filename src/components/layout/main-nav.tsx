@@ -10,7 +10,7 @@ import {
   Archive,
   Calendar,
   Video,
-  Shield,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 const navItems = [
@@ -20,7 +20,7 @@ const navItems = [
   { href: '/archive', label: 'Arquivo Histórico', icon: Archive },
   { href: '/calendar', label: 'Calendário de Eventos', icon: Calendar },
   { href: '/classes', label: 'Aulas Gravadas', icon: Video },
-  { href: '/admin', label: 'Painel Administrativo', icon: Shield },
+  { href: '/admin', label: 'Painel Administrativo', icon: SlidersHorizontal },
 ];
 
 export function MainNav() {
