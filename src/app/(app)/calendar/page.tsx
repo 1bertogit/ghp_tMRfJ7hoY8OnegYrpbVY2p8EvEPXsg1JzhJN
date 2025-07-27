@@ -4,8 +4,9 @@ import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Video, Users, Calendar as CalendarIcon, Clock, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-const events = [
+const eventsData = [
   {
     id: 1,
     title: 'Masterclass: Blefaroplastia Avançada com Laser de CO2',
@@ -67,7 +68,27 @@ const complexityColors: { [key: string]: string } = {
   'Iniciante': 'border-green-400/50 text-green-300',
 }
 
+interface Event {
+    id: number;
+    title: string;
+    type: string;
+    date: string;
+    complexity: string;
+    participants: number;
+    platform: string;
+    formattedDate?: string;
+    formattedTime?: string;
+}
+
 export default function CalendarPage() {
+  const [events, setEvents] = useState<Event[]>(eventsData);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -110,11 +131,11 @@ export default function CalendarPage() {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/60">
                     <div className="flex items-center gap-2">
                         <CalendarIcon className="w-4 h-4" />
-                        <span>{formatDate(event.date)}</span>
+                        <span>{isClient ? formatDate(event.date) : '...'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        <span>{formatTime(event.date)}</span>
+                        <span>{isClient ? formatTime(event.date) : '...'}</span>
                     </div>
                      <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
