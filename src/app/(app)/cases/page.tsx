@@ -169,71 +169,72 @@ export default function CasesPage() {
     setUploadProgress(0);
 
     try {
-        const uploadedImageUrls: string[] = [];
-        if (newCaseFiles.length > 0) {
-            const uploadPromises = newCaseFiles.map(file => {
-                return new Promise<string>((resolve, reject) => {
-                    const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadedImageUrls: string[] = [];
+      if (newCaseFiles.length > 0) {
+        const progresses = new Array(newCaseFiles.length).fill(0);
 
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            // This is a simplified progress update. For multiple files, you'd average them.
-                            setUploadProgress(progress);
-                        },
-                        (error) => {
-                            console.error("Upload failed for file:", file.name, error);
-                            reject(error);
-                        },
-                        async () => {
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            resolve(downloadURL);
-                        }
-                    );
-                });
-            });
-            const urls = await Promise.all(uploadPromises);
-            uploadedImageUrls.push(...urls);
-             setUploadProgress(100);
-        }
+        const uploadPromises = newCaseFiles.map((file, index) => {
+          return new Promise<string>((resolve, reject) => {
+            const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
 
-        const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
+            uploadTask.on('state_changed',
+              (snapshot) => {
+                progresses[index] = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const totalProgress = progresses.reduce((acc, p) => acc + p, 0) / newCaseFiles.length;
+                setUploadProgress(totalProgress);
+              },
+              (error) => {
+                console.error("Upload failed for file:", file.name, error);
+                reject(error);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
+              }
+            );
+          });
+        });
+        const urls = await Promise.all(uploadPromises);
+        uploadedImageUrls.push(...urls);
+      }
 
-        const analysisInput: AnalyzeCaseInput = {
-            title: newCaseTitle,
-            specialty: newCaseSpecialty,
-            imageDataUris: imageDataUris.length > 0 ? imageDataUris : null,
-        };
-        const result = await analyzeCase(analysisInput);
+      const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
 
-        const newCase = {
-            id: medicalCases.length + 1,
-            title: newCaseTitle,
-            specialty: newCaseSpecialty,
-            submittedBy: 'Dr. Robério',
-            status: 'Em Análise' as const,
-            imageUrl: uploadedImageUrls[0] || 'https://placehold.co/600x400',
-            imageHint: 'new case',
-            analysis: result.analysis,
-            imageCount: uploadedImageUrls.length,
-            videoCount: 0,
-        };
+      const analysisInput: AnalyzeCaseInput = {
+        title: newCaseTitle,
+        specialty: newCaseSpecialty,
+        imageDataUris: imageDataUris.length > 0 ? imageDataUris : null,
+      };
+      const result = await analyzeCase(analysisInput);
 
-        setMedicalCases([newCase, ...medicalCases]);
+      const newCase = {
+        id: medicalCases.length + 1,
+        title: newCaseTitle,
+        specialty: newCaseSpecialty,
+        submittedBy: 'Dr. Robério',
+        status: 'Em Análise' as const,
+        imageUrl: uploadedImageUrls[0] || 'https://placehold.co/600x400',
+        imageHint: 'new case',
+        analysis: result.analysis,
+        imageCount: uploadedImageUrls.length,
+        videoCount: 0,
+      };
+
+      setMedicalCases([newCase, ...medicalCases]);
 
     } catch (error) {
-        console.error('Failed to add new case:', error);
+      console.error('Failed to add new case:', error);
     } finally {
-        setIsSubmitting(false);
-        setUploadProgress(null);
-        setNewCaseTitle('');
-        setNewCaseSpecialty('');
-        setNewCaseFiles([]);
-        setPreviewUrls([]);
-        setIsDialogOpen(false);
+      setIsSubmitting(false);
+      setUploadProgress(null);
+      setNewCaseTitle('');
+      setNewCaseSpecialty('');
+      setNewCaseFiles([]);
+      setPreviewUrls([]);
+      setIsDialogOpen(false);
     }
-};
+  };
 
   return (
     <div className="w-full">
