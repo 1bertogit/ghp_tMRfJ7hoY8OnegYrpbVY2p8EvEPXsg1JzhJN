@@ -4,7 +4,11 @@
 import { useState } from 'react';
 import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
-import { FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone, Check } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone, Filter, X } from 'lucide-react';
 
 const filterGroups = {
   'Procedimento': ['Browlift', 'Deep Neck', 'Blefaroplastia', 'Cantopexia'],
@@ -94,10 +98,14 @@ const categoryStyles = {
 export default function ArchivePage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const toggleFilter = (filter: string) => {
-    setActiveFilters(prev => 
-      prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
-    );
+  const handleFilterChange = (filter: string, checked: boolean | 'indeterminate') => {
+    setActiveFilters(prev => {
+      if (checked) {
+        return [...prev, filter];
+      } else {
+        return prev.filter(f => f !== filter);
+      }
+    });
   };
 
   const filteredItems = archiveItems.filter(item => {
@@ -107,42 +115,60 @@ export default function ArchivePage() {
 
   return (
     <div className="w-full">
-      <GlassCard className="mb-8 p-6">
-        <h3 className="text-lg font-medium text-white/90 mb-4">Filtros Avançados</h3>
-        <div className="space-y-4">
-          {Object.entries(filterGroups).map(([groupName, tags]) => (
-            <div key={groupName}>
-              <p className="text-sm text-white/70 mb-2">{groupName}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                {tags.map(tag => {
-                  const isActive = activeFilters.includes(tag);
-                  return (
-                    <Button 
-                      key={tag}
-                      variant={isActive ? 'default' : 'ghost'}
-                      onClick={() => toggleFilter(tag)}
-                      className={
-                          isActive 
-                          ? 'glass-button bg-cyan-400/30 hover:bg-cyan-400/40 text-cyan-200 border-cyan-400/50'
-                          : 'glass-button bg-white/5 hover:bg-white/10'
-                      }
-                    >
-                      {isActive && <Check className="w-4 h-4 mr-2" />}
-                      {tag}
+      <GlassCard className="mb-8 p-4">
+        <div className="flex flex-wrap items-center gap-3">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" className="glass-button bg-white/5 hover:bg-white/10 h-10 px-5">
+                        <Filter className="w-4 h-4 mr-2" />
+                        Filtros
                     </Button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+                </SheetTrigger>
+                <SheetContent className="glass-pane w-[350px] sm:w-[400px]">
+                    <SheetHeader className="mb-6">
+                        <SheetTitle className="text-white/90 text-2xl font-light">Filtros Avançados</SheetTitle>
+                    </SheetHeader>
+                    <Accordion type="multiple" defaultValue={['Procedimento']} className="w-full">
+                        {Object.entries(filterGroups).map(([groupName, tags]) => (
+                            <AccordionItem value={groupName} key={groupName}>
+                                <AccordionTrigger className="text-white/80 hover:text-white">{groupName}</AccordionTrigger>
+                                <AccordionContent>
+                                    <div className="space-y-3 pl-2">
+                                        {tags.map(tag => (
+                                            <div key={tag} className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id={tag}
+                                                    checked={activeFilters.includes(tag)}
+                                                    onCheckedChange={(checked) => handleFilterChange(tag, checked)}
+                                                    className="border-white/30 data-[state=checked]:bg-cyan-400 data-[state=checked]:border-cyan-400"
+                                                />
+                                                <Label htmlFor={tag} className="text-white/70 font-light cursor-pointer">{tag}</Label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
+                     {activeFilters.length > 0 && (
+                        <div className="mt-6 pt-4 border-t border-white/10">
+                            <Button variant="link" onClick={() => setActiveFilters([])} className="text-sm text-white/60 hover:text-white w-full">
+                                Limpar todos os filtros
+                            </Button>
+                        </div>
+                    )}
+                </SheetContent>
+            </Sheet>
+
+             {activeFilters.map(filter => (
+                <div key={filter} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-400/20 text-cyan-300 text-sm">
+                    <span>{filter}</span>
+                    <button onClick={() => handleFilterChange(filter, false)} className="text-cyan-300/70 hover:text-cyan-300">
+                        <X size={14} />
+                    </button>
+                </div>
+            ))}
         </div>
-         {activeFilters.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-white/10">
-                <Button variant="link" onClick={() => setActiveFilters([])} className="text-sm text-white/60 hover:text-white">
-                    Limpar todos os filtros
-                </Button>
-            </div>
-        )}
       </GlassCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
