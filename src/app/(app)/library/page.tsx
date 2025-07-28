@@ -315,10 +315,10 @@ export default function LibraryPage() {
                       </div>
                       <div className="flex items-center gap-4">
                         <Button asChild className="glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 px-5 h-10 text-sm">
-                          <a><BookOpen className="w-4 h-4 mr-2"/>Ler Artigo</a>
+                          <span><BookOpen className="w-4 h-4 mr-2"/>Ler Artigo</span>
                         </Button>
                         <Button asChild variant="ghost" className="glass-button bg-white/5 hover:bg-white/10 px-5 h-10 text-sm">
-                          <a><MessageSquare className="w-4 h-4 mr-2"/>Discutir</a>
+                          <span><MessageSquare className="w-4 h-4 mr-2"/>Discutir</span>
                         </Button>
                       </div>
                   </div>
