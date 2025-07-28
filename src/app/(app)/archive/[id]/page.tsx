@@ -149,10 +149,9 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
                 </div>
 
                 <div 
-                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 max-w-none"
-                >
-                    <div dangerouslySetInnerHTML={renderedDescription} />
-                </div>
+                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-li:text-white/70 max-w-none"
+                  dangerouslySetInnerHTML={renderedDescription} 
+                />
 
                 <div className="mt-8 pt-6 border-t border-white/10">
                     <h3 className="text-base font-medium text-white/80 mb-3">Tags</h3>
