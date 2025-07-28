@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 import {
   LayoutDashboard,
   FileText,
@@ -22,15 +23,36 @@ const navItems = [
   { href: '/calendar', label: 'Calendário', icon: Calendar },
   { href: '/classes', label: 'Encontros Gravados', icon: Video },
   { href: '/settings', label: 'Configurações', icon: Settings },
-  { href: '/admin', label: 'Administrativo', icon: SlidersHorizontal },
+];
+
+const adminNavItems = [
+    { href: '/admin', label: 'Administrativo', icon: SlidersHorizontal },
 ];
 
 export function MainNav() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <nav className="flex-1 space-y-2 px-2">
       {navItems.map((item) => {
+        const isActive = pathname.startsWith(item.href);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              'flex items-center gap-3 rounded-lg p-3 text-sm font-light text-white/70 transition-colors hover:bg-white/10 hover:text-white',
+              isActive && 'bg-white/10 text-white font-medium'
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+
+      {user?.role === 'admin' && adminNavItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
           <Link
