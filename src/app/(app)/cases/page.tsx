@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { analyzeCase } from '@/ai/flows/analyze-case-flow';
 import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 const initialMedicalCases = [
   {
@@ -302,76 +303,76 @@ export default function CasesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredCases.map(c => (
-          <GlassCard key={c.id} interactive={true} className="p-0 overflow-hidden flex flex-col group">
-            <div className="relative h-48 w-full overflow-hidden">
-              <Image 
-                src={c.imageUrl} 
-                alt={c.title}
-                fill
-                className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
-                data-ai-hint={c.imageHint}
-              />
-              <div className="absolute top-3 right-3 flex flex-col gap-2">
-                 <Badge variant="outline" className={`glass-pane text-xs backdrop-blur-md ${statusColors[c.status]}`}>
-                    {c.status}
-                  </Badge>
-              </div>
-               <div className="absolute bottom-3 right-3 flex gap-2">
-                {c.imageCount > 0 && (
-                  <Badge variant="outline" className="glass-pane backdrop-blur-md">
-                    <ImageIcon className="w-3 h-3 mr-1.5"/> {c.imageCount}
-                  </Badge>
-                )}
-                {c.videoCount > 0 && (
-                   <Badge variant="outline" className="glass-pane backdrop-blur-md">
-                    <Video className="w-3 h-3 mr-1.5"/> {c.videoCount}
-                  </Badge>
-                )}
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-            </div>
-            <div className="p-6 flex flex-col flex-grow">
-              <Badge variant="outline" className={`self-start mb-3 ${specialtyColors[c.specialty as keyof typeof specialtyColors]}`}>
-                  {c.specialty}
-              </Badge>
-
-              <h3 className="text-lg font-semibold text-white/95 leading-tight flex-grow mb-3">{c.title}</h3>
-              
-              <p className="text-sm font-light text-white/50 mt-auto mb-5">
-                Enviado por: {c.submittedBy}
-              </p>
-
-              {c.analysis && (
-                <div className="mb-6 mt-auto pt-4 border-t border-white/10 bg-white/[.03] p-4 rounded-xl -mx-2">
-                   <div className="flex items-center gap-3 mb-2">
-                     <div className="p-2 bg-purple-500/10 rounded-full border border-purple-400/20">
-                        <Bot className="w-5 h-5 text-purple-300" />
-                     </div>
-                     <p className="text-sm font-semibold text-purple-300">Análise do Dr. Genkit</p>
-                   </div>
-                   <p className="text-sm font-extralight text-white/70 leading-relaxed">
-                     {c.analysis}
-                   </p>
+          <Link href={`/cases/${c.id}`} key={c.id}>
+            <GlassCard interactive={true} className="p-0 overflow-hidden flex flex-col group h-full">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src={c.imageUrl} 
+                  alt={c.title}
+                  fill
+                  className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
+                  data-ai-hint={c.imageHint}
+                />
+                <div className="absolute top-3 right-3 flex flex-col gap-2">
+                   <Badge variant="outline" className={`glass-pane text-xs backdrop-blur-md ${statusColors[c.status]}`}>
+                      {c.status}
+                    </Badge>
                 </div>
-              )}
-
-              <div className="flex items-center gap-2 mt-4">
-                <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <MessageSquare size={16} /> Comentar
-                </Button>
-                 <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <Bookmark size={16} /> Salvar
-                </Button>
-                <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <Share2 size={16} /> Compartilhar
-                </Button>
+                 <div className="absolute bottom-3 right-3 flex gap-2">
+                  {c.imageCount > 0 && (
+                    <Badge variant="outline" className="glass-pane backdrop-blur-md">
+                      <ImageIcon className="w-3 h-3 mr-1.5"/> {c.imageCount}
+                    </Badge>
+                  )}
+                  {c.videoCount > 0 && (
+                     <Badge variant="outline" className="glass-pane backdrop-blur-md">
+                      <Video className="w-3 h-3 mr-1.5"/> {c.videoCount}
+                    </Badge>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
               </div>
-            </div>
-          </GlassCard>
+              <div className="p-6 flex flex-col flex-grow">
+                <Badge variant="outline" className={`self-start mb-3 ${specialtyColors[c.specialty as keyof typeof specialtyColors]}`}>
+                    {c.specialty}
+                </Badge>
+
+                <h3 className="text-lg font-semibold text-white/95 leading-tight flex-grow mb-3">{c.title}</h3>
+                
+                <p className="text-sm font-light text-white/50 mt-auto mb-5">
+                  Enviado por: {c.submittedBy}
+                </p>
+
+                {c.analysis && (
+                  <div className="mb-6 mt-auto pt-4 border-t border-white/10 bg-white/[.03] p-4 rounded-xl -mx-2">
+                     <div className="flex items-center gap-3 mb-2">
+                       <div className="p-2 bg-purple-500/10 rounded-full border border-purple-400/20">
+                          <Bot className="w-5 h-5 text-purple-300" />
+                       </div>
+                       <p className="text-sm font-semibold text-purple-300">Análise do Dr. Genkit</p>
+                     </div>
+                     <p className="text-sm font-extralight text-white/70 leading-relaxed">
+                       {c.analysis}
+                     </p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 mt-4">
+                  <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                      <MessageSquare size={16} /> Comentar
+                  </Button>
+                   <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                      <Bookmark size={16} /> Salvar
+                  </Button>
+                  <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                      <Share2 size={16} /> Compartilhar
+                  </Button>
+                </div>
+              </div>
+            </GlassCard>
+          </Link>
         ))}
       </div>
     </div>
   );
 }
-
-    
