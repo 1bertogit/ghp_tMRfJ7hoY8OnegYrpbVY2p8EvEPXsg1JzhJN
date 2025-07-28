@@ -303,7 +303,7 @@ export default function CasesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredCases.map(c => (
           <GlassCard key={c.id} interactive={true} className="p-0 overflow-hidden flex flex-col group">
-            <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
+            <div className="relative h-48 w-full overflow-hidden">
               <Image 
                 src={c.imageUrl} 
                 alt={c.title}
@@ -355,15 +355,15 @@ export default function CasesPage() {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 mt-auto border-t border-white/10 pt-4 -mx-6 px-6">
+              <div className="flex items-center gap-2 mt-4">
                 <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <MessageSquare className="w-4 h-4 mr-2"/> Comentar
+                    <MessageSquare size={16} /> Comentar
                 </Button>
                  <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <Bookmark className="w-4 h-4 mr-2"/> Salvar
+                    <Bookmark size={16} /> Salvar
                 </Button>
                 <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
-                    <Share2 className="w-4 h-4 mr-2"/> Compartilhar
+                    <Share2 size={16} /> Compartilhar
                 </Button>
               </div>
             </div>
