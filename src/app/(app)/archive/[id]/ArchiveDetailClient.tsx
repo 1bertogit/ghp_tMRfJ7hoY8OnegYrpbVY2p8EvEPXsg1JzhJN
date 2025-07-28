@@ -1,0 +1,99 @@
+
+'use client';
+
+import { GlassCard } from '@/components/shared/glass-card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Clock, Eye } from 'lucide-react';
+import Link from 'next/link';
+// @ts-ignore
+import { Remarkable } from 'remarkable';
+
+interface ArchiveItem {
+    id: number;
+    title: string;
+    category: string;
+    source: string;
+    tags: string[];
+    description: string;
+    views: number;
+    createdAt: string;
+}
+
+interface ArchiveDetailClientProps {
+  item: ArchiveItem;
+}
+
+function formatDate(dateString: string) {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+}
+
+export default function ArchiveDetailClient({ item }: ArchiveDetailClientProps) {
+  const md = new Remarkable();
+  const renderedDescription = { __html: md.render(item.description) };
+
+  return (
+    <div className="w-full">
+      <div className="mb-8">
+        <Link href="/archive" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" />
+            Voltar para o Acervo
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="lg:col-span-2">
+            <GlassCard>
+                <h1 className="text-3xl font-light text-white/95 mb-4">{item.title}</h1>
+                
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/50 mb-6 pb-6 border-b border-white/10">
+                    <span>Fonte: <strong className="font-medium text-white/70">{item.source}</strong></span>
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4"/>
+                        <span>{formatDate(item.createdAt)}</span>
+                    </div>
+                     <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4"/>
+                        <span>{item.views} visualizações</span>
+                    </div>
+                </div>
+
+                <div 
+                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-li:font-extralight prose-li:text-white/70 max-w-none"
+                  dangerouslySetInnerHTML={renderedDescription} 
+                />
+
+                <div className="mt-8 pt-6 border-t border-white/10">
+                    <h3 className="text-base font-medium text-white/80 mb-3">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {item.tags.map(tag => (
+                            <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-white/10 bg-white/5 border-white/10 text-white/70">
+                                {tag}
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
+            </GlassCard>
+        </div>
+
+        <div className="lg:col-span-1 space-y-8 sticky top-8">
+           <GlassCard>
+                <h3 className="text-xl font-light text-white/90 mb-4">Conteúdo Relacionado</h3>
+                <div className="text-center py-8">
+                    <p className="text-sm text-white/50">Em breve...</p>
+                </div>
+           </GlassCard>
+            <GlassCard>
+                <h3 className="text-xl font-light text-white/90 mb-4">Discussão</h3>
+                <div className="text-center py-8">
+                    <p className="text-sm text-white/50">Em breve...</p>
+                </div>
+           </GlassCard>
+        </div>
+      </div>
+    </div>
+  );
+}
