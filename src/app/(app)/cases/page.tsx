@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, ArrowRight } from 'lucide-react';
+import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video } from 'lucide-react';
 import Image from 'next/image';
 import { analyzeCase } from '@/ai/flows/analyze-case-flow';
 import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
@@ -23,6 +23,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'surgery nose',
     analysis: null,
+    imageCount: 3,
+    videoCount: 1,
   },
   {
     id: 2,
@@ -33,6 +35,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'surgery breast',
     analysis: 'O planejamento pré-operatório foi excelente, com boa escolha do implante. A técnica de inserção dual-plane garantiu um resultado natural e simétrico. Recomendo atenção ao acompanhamento pós-operatório para monitorar a contratura capsular.',
+    imageCount: 5,
+    videoCount: 0,
   },
   {
     id: 3,
@@ -43,6 +47,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'surgery eye',
     analysis: null,
+    imageCount: 2,
+    videoCount: 0,
   },
   {
     id: 4,
@@ -53,6 +59,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'surgery face',
     analysis: null,
+    imageCount: 4,
+    videoCount: 2,
   },
   {
     id: 5,
@@ -63,6 +71,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'rhinoplasty surgery',
     analysis: 'Excelente reconstrução da estrutura nasal. O uso de enxertos cartilaginosos foi preciso e garantiu a funcionalidade respiratória. As proporções faciais foram respeitadas, resultando em um perfil harmonioso.',
+    imageCount: 6,
+    videoCount: 1,
   },
   {
     id: 6,
@@ -73,6 +83,8 @@ const initialMedicalCases = [
     imageUrl: 'https://placehold.co/600x400',
     imageHint: 'mastectomy reconstruction',
     analysis: 'A técnica de retalho DIEP foi bem executada, mas a simetrização com a mama contralateral pode ser aprimorada em um segundo tempo cirúrgico. Sugiro avaliação do complexo areolopapilar.',
+    imageCount: 3,
+    videoCount: 1,
   },
 ];
 
@@ -180,6 +192,8 @@ export default function CasesPage() {
             imageUrl: newCaseImageUrl || 'https://placehold.co/600x400',
             imageHint: 'new case',
             analysis: result.analysis,
+            imageCount: 1,
+            videoCount: 0,
         };
 
         setMedicalCases([newCase, ...medicalCases]);
@@ -289,28 +303,37 @@ export default function CasesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredCases.map(c => (
           <GlassCard key={c.id} interactive={true} className="p-0 overflow-hidden flex flex-col group">
-            <div className="relative h-48 w-full">
+            <div className="relative h-48 w-full overflow-hidden rounded-t-3xl">
               <Image 
                 src={c.imageUrl} 
                 alt={c.title}
                 fill
-                objectFit="cover"
-                className="opacity-70 group-hover:opacity-90 transition-opacity duration-300"
+                className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
                 data-ai-hint={c.imageHint}
               />
-               <div className="absolute top-4 right-4 z-10">
-                <span className={`text-xs font-medium px-3 py-1 rounded-full border ${statusColors[c.status]}`}>
-                  {c.status}
-                </span>
+              <div className="absolute top-3 right-3 flex flex-col gap-2">
+                 <Badge variant="outline" className={`glass-pane text-xs backdrop-blur-md ${statusColors[c.status]}`}>
+                    {c.status}
+                  </Badge>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+               <div className="absolute bottom-3 right-3 flex gap-2">
+                {c.imageCount > 0 && (
+                  <Badge variant="outline" className="glass-pane backdrop-blur-md">
+                    <ImageIcon className="w-3 h-3 mr-1.5"/> {c.imageCount}
+                  </Badge>
+                )}
+                {c.videoCount > 0 && (
+                   <Badge variant="outline" className="glass-pane backdrop-blur-md">
+                    <Video className="w-3 h-3 mr-1.5"/> {c.videoCount}
+                  </Badge>
+                )}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
             </div>
             <div className="p-6 flex flex-col flex-grow">
-              <div className="flex justify-between items-start mb-2">
-                <Badge variant="outline" className={`${specialtyColors[c.specialty as keyof typeof specialtyColors]}`}>
+              <Badge variant="outline" className={`self-start mb-3 ${specialtyColors[c.specialty as keyof typeof specialtyColors]}`}>
                   {c.specialty}
-                </Badge>
-              </div>
+              </Badge>
 
               <h3 className="text-lg font-semibold text-white/95 leading-tight flex-grow mb-3">{c.title}</h3>
               
@@ -339,8 +362,8 @@ export default function CasesPage() {
                  <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
                     <Bookmark className="w-4 h-4 mr-2"/> Salvar
                 </Button>
-                <Button variant="ghost" size="icon" className="glass-button rounded-full h-10 w-10">
-                    <ArrowRight className="w-4 h-4"/>
+                <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                    <Share2 className="w-4 h-4 mr-2"/> Compartilhar
                 </Button>
               </div>
             </div>
@@ -349,3 +372,4 @@ export default function CasesPage() {
       </div>
     </div>
   );
+}
