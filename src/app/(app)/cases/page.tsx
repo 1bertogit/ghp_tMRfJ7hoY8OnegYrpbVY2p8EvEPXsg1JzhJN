@@ -15,6 +15,9 @@ import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Progress } from '@/components/ui/progress';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const initialMedicalCases = [
   {
@@ -121,7 +124,8 @@ export default function CasesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   // Form state for the new case
   const [newCaseTitle, setNewCaseTitle] = useState('');
@@ -161,38 +165,76 @@ export default function CasesPage() {
   const handleAddCase = async () => {
     if (!newCaseTitle || !newCaseSpecialty) return;
     
-    setIsAnalyzing(true);
+    setIsSubmitting(true);
+    setUploadProgress(0);
     
     try {
+        // Step 1: Upload files to Firebase Storage and get their URLs
+        const uploadedImageUrls: string[] = [];
+        const totalFiles = newCaseFiles.length;
+        let filesUploaded = 0;
+
+        for (const file of newCaseFiles) {
+            const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            await new Promise<void>((resolve, reject) => {
+                 uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes);
+                        const overallProgress = ((filesUploaded + progress) / totalFiles) * 100;
+                        setUploadProgress(overallProgress);
+                    },
+                    (error) => {
+                        console.error("Upload failed for file:", file.name, error);
+                        reject(error);
+                    },
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        uploadedImageUrls.push(downloadURL);
+                        filesUploaded++;
+                        if (filesUploaded === totalFiles) {
+                           setUploadProgress(100);
+                           resolve();
+                        }
+                    }
+                );
+            });
+        }
+        
+        // Step 2: Get data URIs for AI analysis (can be done in parallel or after)
         const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
         
+        // Step 3: Run AI Analysis
         const analysisInput: AnalyzeCaseInput = {
             title: newCaseTitle,
             specialty: newCaseSpecialty,
             imageDataUris: imageDataUris.length > 0 ? imageDataUris : null,
         };
-
         const result = await analyzeCase(analysisInput);
 
+        // Step 4: Create new case object and update state
         const newCase = {
             id: medicalCases.length + 1,
             title: newCaseTitle,
             specialty: newCaseSpecialty,
             submittedBy: 'Dr. Robério', // Assuming the logged-in user
             status: 'Em Análise' as const,
-            imageUrl: previewUrls[0] || 'https://placehold.co/600x400',
+            imageUrl: uploadedImageUrls[0] || 'https://placehold.co/600x400',
             imageHint: 'new case',
             analysis: result.analysis,
-            imageCount: newCaseFiles.length,
-            videoCount: 0,
+            imageCount: uploadedImageUrls.length,
+            videoCount: 0, // Assuming only images for now
         };
 
         setMedicalCases([newCase, ...medicalCases]);
+
     } catch (error) {
-        console.error('Failed to analyze case:', error);
+        console.error('Failed to add new case:', error);
         // Handle error, e.g., show a toast message
     } finally {
-        setIsAnalyzing(false);
+        setIsSubmitting(false);
+        setUploadProgress(null);
         // Reset form and close dialog
         setNewCaseTitle('');
         setNewCaseSpecialty('');
@@ -319,14 +361,21 @@ export default function CasesPage() {
                             </Button>
                         )}
                     </div>
+                    {uploadProgress !== null && (
+                      <div className="space-y-2">
+                          <Label className="text-white/70">Progresso do Upload</Label>
+                          <Progress value={uploadProgress} className="w-full h-2 bg-black/20 [&>div]:bg-cyan-400" />
+                          <p className="text-xs text-white/50 text-right">{Math.round(uploadProgress)}%</p>
+                      </div>
+                    )}
                 </div>
                 <DialogFooter>
                     <Button 
                         onClick={handleAddCase} 
                         className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base"
-                        disabled={isAnalyzing || !newCaseTitle || !newCaseSpecialty}
+                        disabled={isSubmitting || !newCaseTitle || !newCaseSpecialty}
                     >
-                        {isAnalyzing ? 'Analisando com IA...' : 'Enviar para Análise'}
+                        {isSubmitting ? (uploadProgress !== null && uploadProgress < 100 ? 'Enviando Arquivos...' : 'Analisando com IA...') : 'Enviar para Análise'}
                     </Button>
                 </DialogFooter>
             </DialogContent>
