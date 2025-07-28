@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Settings, Waypoints } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
+import Image from 'next/image';
 
 export function Sidebar() {
   const router = useRouter();
@@ -21,9 +22,9 @@ export function Sidebar() {
       <div className="h-full w-full glass-pane rounded-3xl flex flex-col p-4">
         <header className="flex items-center gap-3 p-2 mb-8">
            <div className="p-2 bg-white/10 rounded-lg border border-white/10">
-                <Waypoints className="w-6 h-6 text-white/80" />
+                <Image src="https://firebasestorage.googleapis.com/v0/b/visioncare-mentorship.appspot.com/o/logo.png?alt=media&token=362a6353-2292-424a-85c3-636c1e3458ae" alt="Legacy Mentoring Logo" width={24} height={24} />
            </div>
-          <h1 className="text-xl font-medium text-white/95">VisionCare</h1>
+          <h1 className="text-xl font-medium text-white/95">Legacy Mentoring</h1>
         </header>
 
         <MainNav />
