@@ -26,6 +26,7 @@ export interface AcademyCourse {
     imageUrl: string;
     imageHint: string;
     locked?: boolean;
+    videoUrl?: string;
     curriculum: CurriculumModule[];
 }
 
@@ -43,6 +44,7 @@ export const featuredCourse: AcademyCourse = {
   price: 'R$8.500,00',
   imageUrl: 'https://placehold.co/1200x675',
   imageHint: 'facial surgery education',
+  videoUrl: 'https://www.youtube.com/embed/wgd_hB3P7s0',
   curriculum: [
     {
       title: 'Módulo 1: Introdução e Onboarding',

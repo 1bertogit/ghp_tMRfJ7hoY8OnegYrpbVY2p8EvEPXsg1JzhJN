@@ -36,8 +36,21 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-8">
             <GlassCard className="p-0">
-                 <div className="aspect-video w-full bg-black rounded-t-3xl flex items-center justify-center">
-                    <p className="text-white/50">Player de Vídeo Principal</p>
+                 <div className="aspect-video w-full bg-black rounded-t-3xl overflow-hidden">
+                    {course.videoUrl ? (
+                         <iframe
+                            src={course.videoUrl}
+                            title={course.title}
+                            className="w-full h-full"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <p className="text-white/50">Player de Vídeo Principal</p>
+                        </div>
+                    )}
                 </div>
                 <div className="p-6">
                     <h1 className="text-3xl font-light text-white/95 mb-3">{course.title}</h1>
