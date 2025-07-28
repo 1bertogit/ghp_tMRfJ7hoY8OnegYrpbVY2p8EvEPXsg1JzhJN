@@ -1,3 +1,4 @@
+
 'use client';
 
 import { GlassCard } from '@/components/shared/glass-card';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Download, MessageSquare, Mic, Book, Subtitles, Clock4 } from 'lucide-react';
 import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 
 interface ClassData {
