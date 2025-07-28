@@ -273,10 +273,6 @@ export default function CasesPage() {
               <SelectItem value="Lifting">Lifting</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="ghost" className="h-12 w-full md:w-auto px-4 glass-button">
-            <SlidersHorizontal className="w-5 h-5 mr-2" />
-            Filtros Avançados
-          </Button>
            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
                <Button className="h-12 w-full md:w-auto px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
