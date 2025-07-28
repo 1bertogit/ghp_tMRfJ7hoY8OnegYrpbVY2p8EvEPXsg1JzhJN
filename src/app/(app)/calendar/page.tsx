@@ -106,13 +106,6 @@ export default function CalendarPage() {
 
   return (
     <div className="w-full">
-      <header className="mb-8">
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">Calendário de Eventos</h1>
-        <p className="text-lg font-extralight text-white/50 mt-1">
-          Participe das próximas sessões e masterclasses.
-        </p>
-      </header>
-
       <div className="space-y-8">
         {events.map((event) => (
           <GlassCard key={event.id} interactive={false} className="p-0 overflow-hidden !rounded-2xl">

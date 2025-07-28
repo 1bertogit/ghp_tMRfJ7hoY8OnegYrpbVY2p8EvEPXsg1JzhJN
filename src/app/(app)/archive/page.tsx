@@ -67,13 +67,6 @@ export default function ArchivePage() {
 
   return (
     <div className="w-full">
-      <header className="mb-8">
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">Arquivo Histórico</h1>
-        <p className="text-lg font-extralight text-white/50 mt-1">
-          Preservando discussões e conteúdos valiosos para referência futura.
-        </p>
-      </header>
-
       <GlassCard className="mb-8 p-4">
         <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm text-white/70 mr-2">Filtrar por:</p>

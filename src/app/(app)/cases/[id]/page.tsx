@@ -41,17 +41,12 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
   
   return (
     <div className="w-full">
-      <header className="mb-8">
+      <div className="mb-8">
         <Link href="/cases" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Voltar para todos os casos
         </Link>
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">{caseDetails.title}</h1>
-        <div className="flex items-center gap-4 text-sm text-white/50 mt-2">
-            <span>Enviado por: <strong>{caseDetails.submittedBy}</strong></span>
-            <Badge variant="outline" className="bg-purple-500/20 text-purple-300 border-purple-400/30">{caseDetails.status}</Badge>
-        </div>
-      </header>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">

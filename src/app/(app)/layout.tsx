@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
+import { Header } from '@/components/layout/header';
 import { FloatingOrb } from '@/components/ui/floating-orb';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -10,9 +11,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       
       <div className="relative z-10 flex">
         <Sidebar />
-        <main className="flex-1 pl-4 pr-4 py-4 md:pl-[280px] md:pr-8 md:py-8">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col pl-4 pr-4 py-4 md:pl-[280px] md:pr-8 md:py-8">
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+        </div>
       </div>
     </div>
   );

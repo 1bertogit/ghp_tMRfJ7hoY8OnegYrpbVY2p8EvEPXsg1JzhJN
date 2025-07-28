@@ -82,13 +82,6 @@ export default function ClassesPage() {
 
   return (
     <div className="w-full">
-      <header className="mb-8">
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">Aulas Gravadas</h1>
-        <p className="text-lg font-extralight text-white/50 mt-1">
-          Acesse uma biblioteca curada de conhecimento cirúrgico sob demanda.
-        </p>
-      </header>
-
       <GlassCard className="mb-8 p-4">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="relative w-full md:flex-1">

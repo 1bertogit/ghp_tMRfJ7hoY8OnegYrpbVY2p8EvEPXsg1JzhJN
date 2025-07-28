@@ -52,13 +52,6 @@ const scientificArticles = [
 export default function LibraryPage() {
   return (
     <div className="w-full">
-      <header className="mb-8">
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">Biblioteca Científica</h1>
-        <p className="text-lg font-extralight text-white/50 mt-1">
-          Acesse, leia e discuta os artigos mais recentes da cirurgia plástica.
-        </p>
-      </header>
-
        <GlassCard className="mb-8 p-4">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="relative w-full md:flex-1">

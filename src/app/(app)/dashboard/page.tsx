@@ -179,24 +179,6 @@ export default function DashboardPage() {
 
   return (
     <div className="w-full">
-      <header className="mb-8 flex justify-between items-start">
-        <div>
-          <h1 className="text-4xl font-light text-white/90 tracking-wider">
-            Boa noite, Dr. Robério
-          </h1>
-          <p className="text-lg font-extralight text-white/50 mt-1">
-            Aqui está o seu resumo de hoje.
-          </p>
-        </div>
-         <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/10 rounded-full relative">
-            <Bell size={20} />
-            <span className="absolute top-1 right-1 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-            </span>
-        </Button>
-      </header>
-
       {isClient && nextEvent && (
         <GlassCard className="mb-8 p-0 overflow-hidden" interactive={true}>
           <Link href="/calendar">
