@@ -226,7 +226,7 @@ export default function CasesPage() {
             <Input
               type="text"
               placeholder="Buscar por título do caso..."
-              className="glass-input h-12 pl-12 text-base w-full"
+              className="glass-input h-12 text-base w-full"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
