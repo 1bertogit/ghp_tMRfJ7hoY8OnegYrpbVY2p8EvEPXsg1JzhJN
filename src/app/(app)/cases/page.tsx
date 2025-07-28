@@ -216,7 +216,7 @@ export default function CasesPage() {
             />
           </div>
           <Select value={specialtyFilter} onValueChange={setSpecialtyFilter}>
-            <SelectTrigger className="w-full md:w-[220px] h-12 glass-input text-base">
+            <SelectTrigger className="w-full md:w-[220px] h-12 glass-input text-base text-white/80">
               <SelectValue placeholder="Filtrar por especialidade" />
             </SelectTrigger>
             <SelectContent className="glass-pane">
@@ -248,12 +248,12 @@ export default function CasesPage() {
                 <div className="grid gap-6 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="title" className="text-white/70">Título do Caso</Label>
-                        <Input id="title" value={newCaseTitle} onChange={e => setNewCaseTitle(e.target.value)} className="glass-input h-11" />
+                        <Input id="title" value={newCaseTitle} onChange={e => setNewCaseTitle(e.target.value)} className="glass-input h-11 text-white/80" />
                     </div>
                     <div className="grid gap-2">
                          <Label htmlFor="specialty" className="text-white/70">Especialidade</Label>
                         <Select onValueChange={setNewCaseSpecialty}>
-                            <SelectTrigger className="w-full h-11 glass-input">
+                            <SelectTrigger className="w-full h-11 glass-input text-white/80">
                                 <SelectValue placeholder="Selecione a especialidade" />
                             </SelectTrigger>
                             <SelectContent className="glass-pane">
