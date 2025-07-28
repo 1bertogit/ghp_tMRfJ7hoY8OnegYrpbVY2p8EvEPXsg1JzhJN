@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, MessageSquare, User, CheckCircle, FileText, Bot, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 // Mock data, to be replaced with real data fetching
 const caseDetails = {
@@ -38,6 +39,11 @@ const getIconForEvent = (type: string) => {
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
   // In a real app, you would fetch caseDetails and timelineEvents based on params.id
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   return (
     <div className="w-full">
@@ -59,7 +65,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                                 {getIconForEvent(event.type)}
                             </div>
                             <p className="text-xs text-white/50 mb-1">
-                                {new Date(event.timestamp).toLocaleString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                {isClient ? new Date(event.timestamp).toLocaleString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '...'}
                             </p>
                             <p className="text-sm text-white/80">
                                 <strong className="font-medium text-white/95">{event.user}</strong> {event.description}
