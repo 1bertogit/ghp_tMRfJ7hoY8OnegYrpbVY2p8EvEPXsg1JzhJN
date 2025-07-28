@@ -15,6 +15,13 @@ const recordedClassesData = [
         { title: 'Apresentação (PDF)', url: '#' },
         { title: 'Artigo de Referência', url: '#' },
     ],
+    timestamps: [
+        { time: '00:15', description: 'Introdução à anatomia do Deep Plane' },
+        { time: '12:45', description: 'Marcações pré-operatórias essenciais' },
+        { time: '25:30', description: 'Técnica de dissecção e liberação' },
+        { time: '45:10', description: 'Pontos de sutura e vetor de tração' },
+        { time: '01:15:00', description: 'Gerenciamento de complicações' },
+    ],
   },
   {
     id: 2,
@@ -26,6 +33,7 @@ const recordedClassesData = [
     materials: [
         { title: 'Slides da Aula (PDF)', url: '#' },
     ],
+    timestamps: [],
   },
   {
     id: 3,
@@ -38,6 +46,7 @@ const recordedClassesData = [
         { title: 'Protocolo de Lipoenxertia', url: '#' },
         { title: 'Tabela de Implantes (PDF)', url: '#' },
     ],
+    timestamps: [],
   },
   {
     id: 4,
@@ -47,6 +56,7 @@ const recordedClassesData = [
     description: 'Uma aula essencial sobre a consulta pré-operatória em blefaroplastia, como gerenciar as expectativas dos pacientes e um guia prático para identificar e tratar as complicações mais comuns, como ectrópio e olho seco.',
     videoUrl: '#',
     materials: [],
+    timestamps: [],
   },
   {
     id: 5,
@@ -58,6 +68,7 @@ const recordedClassesData = [
     materials: [
         { title: 'Guia de Planejamento', url: '#' },
     ],
+    timestamps: [],
   },
   {
     id: 6,
@@ -67,6 +78,7 @@ const recordedClassesData = [
     description: 'Uma análise crítica sobre o uso de fios de sustentação para rejuvenescimento facial. A aula revisa as evidências científicas, os diferentes tipos de fios disponíveis e demonstra as técnicas de inserção para um resultado eficaz e seguro.',
     videoUrl: '#',
     materials: [],
+    timestamps: [],
   },
 ];
 

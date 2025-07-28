@@ -3,8 +3,10 @@
 import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Download, MessageSquare, Mic, Book } from 'lucide-react';
+import { ArrowLeft, Download, MessageSquare, Mic, Book, Subtitles, Clock4 } from 'lucide-react';
 import Link from 'next/link';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 interface ClassData {
     id: number;
@@ -14,6 +16,7 @@ interface ClassData {
     instructor: string;
     videoUrl: string;
     materials: { title: string; url: string; }[];
+    timestamps: { time: string; description: string; }[];
 }
 
 interface ClassDetailClientProps {
@@ -57,6 +60,24 @@ export default function ClassDetailClient({ classData }: ClassDetailClientProps)
                     </p>
                 </div>
             </GlassCard>
+
+             <GlassCard>
+                <h2 className="text-2xl font-light text-white/90 mb-6">Pontos-Chave da Aula</h2>
+                <div className="space-y-4">
+                    {classData.timestamps.map((timestamp, index) => (
+                        <div key={index} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                            <div className="flex items-center justify-center w-12 h-12 bg-cyan-400/20 rounded-lg text-cyan-300">
+                                <Clock4 className="w-6 h-6"/>
+                            </div>
+                            <div>
+                                <p className="font-mono text-sm font-medium text-cyan-300">{timestamp.time}</p>
+                                <p className="text-white/80">{timestamp.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </GlassCard>
+
             <GlassCard>
                 <h2 className="text-2xl font-light text-white/90 mb-6">Discussão da Aula</h2>
                  <div className="text-center py-12">
@@ -82,19 +103,41 @@ export default function ClassDetailClient({ classData }: ClassDetailClientProps)
                             </a>
                         </Button>
                     ))}
+                     {classData.materials.length === 0 && (
+                        <p className="text-sm text-white/50 text-center py-4">Nenhum material complementar.</p>
+                    )}
                 </div>
             </GlassCard>
              <GlassCard>
                 <h3 className="text-xl font-light text-white/90 mb-4">Opções de Idioma</h3>
-                <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start h-12 glass-button bg-white/5 hover:bg-white/10">
-                        <Book className="w-4 h-4 mr-3" />
-                        Legendas (Português)
-                    </Button>
-                     <Button variant="outline" className="w-full justify-start h-12 glass-button bg-white/5 hover:bg-white/10">
-                        <Mic className="w-4 h-4 mr-3" />
-                        Áudio Original
-                    </Button>
+                <div className="space-y-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="audio-language" className="text-sm font-medium text-white/70 flex items-center gap-2"><Mic className="w-4 h-4" /> Áudio Dublado</Label>
+                        <Select defaultValue="pt-BR">
+                            <SelectTrigger id="audio-language" className="w-full h-11 glass-input text-white/80">
+                                <SelectValue placeholder="Selecione o áudio" />
+                            </SelectTrigger>
+                            <SelectContent className="glass-pane">
+                                <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                                <SelectItem value="en-US">English (USA)</SelectItem>
+                                <SelectItem value="es-ES">Español (España)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                     <div className="grid gap-2">
+                        <Label htmlFor="subtitle-language" className="text-sm font-medium text-white/70 flex items-center gap-2"><Subtitles className="w-4 h-4" /> Legendas</Label>
+                        <Select defaultValue="pt-BR">
+                            <SelectTrigger id="subtitle-language" className="w-full h-11 glass-input text-white/80">
+                                <SelectValue placeholder="Selecione a legenda" />
+                            </SelectTrigger>
+                            <SelectContent className="glass-pane">
+                                <SelectItem value="none">Desativado</SelectItem>
+                                <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                                <SelectItem value="en-US">English (USA)</SelectItem>
+                                <SelectItem value="es-ES">Español (España)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
            </GlassCard>
         </div>
