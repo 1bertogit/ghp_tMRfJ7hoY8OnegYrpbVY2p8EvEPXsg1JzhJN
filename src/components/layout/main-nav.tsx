@@ -52,7 +52,7 @@ export function MainNav() {
   }
 
   return (
-    <nav className="flex-1 space-y-2 px-2">
+    <>
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
@@ -86,6 +86,6 @@ export function MainNav() {
           </Link>
         );
       })}
-    </nav>
+    </>
   );
 }

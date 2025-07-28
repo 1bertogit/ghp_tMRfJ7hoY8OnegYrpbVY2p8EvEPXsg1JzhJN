@@ -19,7 +19,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-[260px] p-4 hidden md:block z-20">
+    <aside role="complementary" className="fixed top-0 left-0 h-screen w-[260px] p-4 hidden md:block z-20">
       <div className="h-full w-full glass-pane rounded-3xl flex flex-col p-4">
         <header className="flex items-center gap-3 p-2 mb-8">
            <div className="p-2 bg-white/10 rounded-lg border border-white/10">
@@ -28,9 +28,11 @@ export function Sidebar() {
           <h1 className="text-xl font-medium text-white/95">Legacy Mentoring</h1>
         </header>
 
-        <MainNav />
+        <nav role="navigation" className="flex-1 space-y-2 px-2">
+            <MainNav />
+        </nav>
         
-        <footer className="mt-auto">
+        <footer className="mt-auto" role="contentinfo">
             <div className="p-4 bg-white/5 rounded-2xl flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar>
