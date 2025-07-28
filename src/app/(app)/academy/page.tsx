@@ -13,14 +13,14 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const featuredCourse = {
   id: 1,
-  title: 'Trilha de Rinoplastia: Do Fundamento à Maestria',
-  category: 'Trilha de Aprendizagem',
+  title: 'Browlift & EndomidFace',
+  category: 'TERÇO SUPERIOR E MÉDIO DA FACE',
   level: 'Iniciante ao Avançado',
-  duration: '40 horas',
-  modules: 15,
+  duration: '44 horas',
+  modules: 5,
   imageUrl: 'https://placehold.co/1200x675',
-  imageHint: 'surgery diagram',
-  description: 'Uma jornada completa pela rinoplastia, cobrindo anatomia, planejamento 3D, técnicas primárias, abordagens revisionais e o gerenciamento eficaz de complicações comuns e raras.',
+  imageHint: 'facial surgery woman',
+  description: 'Desvende os segredos das cirurgias com cicatrizes reduzidas e escondidas para rejuvenescimento facial. Pela mesma incisão scarless da Frontoplastia é possível elevar toda a estrutura do terço médio. E por isso, este curso oferece uma abordagem única e exclusiva para aprimorar a beleza e a harmonia facial até mesmo em pacientes jovens.',
   rating: 4.9,
   status: 'Em Andamento',
 };
@@ -95,6 +95,7 @@ const courseSections = [
 ]
 
 const categoryColors: { [key: string]: string } = {
+  'TERÇO SUPERIOR E MÉDIO DA FACE': 'text-yellow-400 border-yellow-400/30 bg-yellow-500/10',
   'Trilha de Aprendizagem': 'text-purple-400 border-purple-400/30 bg-purple-500/10',
   'Curso': 'text-cyan-400 border-cyan-400/30 bg-cyan-500/10',
   'Workshop Prático': 'text-orange-400 border-orange-400/30 bg-orange-500/10',
@@ -119,7 +120,7 @@ export default function AcademyPage() {
                 <div className="absolute inset-0 flex items-center p-8 md:p-12">
                     <div className="max-w-xl">
                         <Badge variant="outline" className={`mb-4 ${categoryColors[featuredCourse.category]}`}>
-                            <GraduationCap className="w-4 h-4 mr-2"/> {featuredCourse.category}
+                            {featuredCourse.category}
                         </Badge>
                         <h1 className="text-4xl lg:text-5xl font-bold text-white/95 leading-tight">{featuredCourse.title}</h1>
                         <p className="mt-4 text-lg text-white/60 font-light leading-relaxed">{featuredCourse.description}</p>
@@ -212,5 +213,3 @@ export default function AcademyPage() {
     </div>
   );
 }
-
-    
