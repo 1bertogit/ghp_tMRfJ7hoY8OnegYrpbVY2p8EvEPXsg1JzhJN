@@ -164,17 +164,13 @@ export default function CasesPage() {
 
   const handleAddCase = async () => {
     if (!newCaseTitle || !newCaseSpecialty) return;
-    
+
     setIsSubmitting(true);
     setUploadProgress(0);
-    
+
     try {
-        // Step 1: Upload files to Firebase Storage and get their URLs
         const uploadedImageUrls: string[] = [];
         if (newCaseFiles.length > 0) {
-            const totalFiles = newCaseFiles.length;
-            let filesUploaded = 0;
-
             const uploadPromises = newCaseFiles.map(file => {
                 return new Promise<string>((resolve, reject) => {
                     const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
@@ -182,9 +178,9 @@ export default function CasesPage() {
 
                     uploadTask.on('state_changed',
                         (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes);
-                            const overallProgress = ((filesUploaded + progress) / totalFiles) * 100;
-                            setUploadProgress(overallProgress);
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            // This is a simplified progress update. For multiple files, you'd average them.
+                            setUploadProgress(progress);
                         },
                         (error) => {
                             console.error("Upload failed for file:", file.name, error);
@@ -192,10 +188,6 @@ export default function CasesPage() {
                         },
                         async () => {
                             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            filesUploaded++;
-                            if (filesUploaded === totalFiles) {
-                               setUploadProgress(100);
-                            }
                             resolve(downloadURL);
                         }
                     );
@@ -203,12 +195,11 @@ export default function CasesPage() {
             });
             const urls = await Promise.all(uploadPromises);
             uploadedImageUrls.push(...urls);
+             setUploadProgress(100);
         }
-        
-        // Step 2: Get data URIs for AI analysis
+
         const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
-        
-        // Step 3: Run AI Analysis
+
         const analysisInput: AnalyzeCaseInput = {
             title: newCaseTitle,
             specialty: newCaseSpecialty,
@@ -216,36 +207,33 @@ export default function CasesPage() {
         };
         const result = await analyzeCase(analysisInput);
 
-        // Step 4: Create new case object and update state
         const newCase = {
             id: medicalCases.length + 1,
             title: newCaseTitle,
             specialty: newCaseSpecialty,
-            submittedBy: 'Dr. Robério', // Assuming the logged-in user
+            submittedBy: 'Dr. Robério',
             status: 'Em Análise' as const,
             imageUrl: uploadedImageUrls[0] || 'https://placehold.co/600x400',
             imageHint: 'new case',
             analysis: result.analysis,
             imageCount: uploadedImageUrls.length,
-            videoCount: 0, // Assuming only images for now
+            videoCount: 0,
         };
 
         setMedicalCases([newCase, ...medicalCases]);
 
     } catch (error) {
         console.error('Failed to add new case:', error);
-        // Handle error, e.g., show a toast message
     } finally {
         setIsSubmitting(false);
         setUploadProgress(null);
-        // Reset form and close dialog
         setNewCaseTitle('');
         setNewCaseSpecialty('');
         setNewCaseFiles([]);
         setPreviewUrls([]);
         setIsDialogOpen(false);
     }
-  };
+};
 
   return (
     <div className="w-full">
