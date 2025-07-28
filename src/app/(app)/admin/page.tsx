@@ -1,7 +1,8 @@
+
 import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, FileCheck, BarChart3, Palette, Upload, PlusCircle, Video, BookOpen, Archive } from 'lucide-react';
+import { Users, FileCheck, BarChart3, Palette, Upload, PlusCircle, Video, BookOpen, Archive, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 const managementSections = [
@@ -44,6 +45,15 @@ const managementSections = [
         actions: [
             { label: "Personalizar Aparência", href: "/admin/customize", icon: Palette },
         ]
+    },
+    {
+        title: "Segurança e Backups",
+        description: "Crie e restaure backups da plataforma.",
+        icon: Shield,
+        color: "text-yellow-400",
+        actions: [
+            { label: "Gerenciar Backups", href: "#", icon: Archive, disabled: true },
+        ]
     }
 ];
 
@@ -65,7 +75,7 @@ export default function AdminPage() {
             <div className="mt-6 space-y-3">
               {section.actions.map((action) => (
                 <Link href={action.href} key={action.label} passHref>
-                   <Button variant="outline" className="w-full justify-between h-12 glass-button bg-white/5 hover:bg-white/10">
+                   <Button variant="outline" className="w-full justify-between h-12 glass-button bg-white/5 hover:bg-white/10" disabled={!!action.disabled}>
                      <div className="flex items-center gap-3">
                         <action.icon className="w-4 h-4 text-white/70" />
                         <span className="text-white/80">{action.label}</span>
