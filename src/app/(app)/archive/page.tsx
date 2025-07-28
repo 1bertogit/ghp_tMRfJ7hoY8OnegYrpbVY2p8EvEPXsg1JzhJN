@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone, Filter, X, PlusCircle, Upload, Link as LinkIcon } from 'lucide-react';
-import Image from 'next/image';
+import Link from 'next/link';
 
 const filterGroups = {
   'Procedimento': ['Browlift', 'Deep Neck', 'Blefaroplastia', 'Cantopexia'],
@@ -29,6 +29,7 @@ const initialArchiveItems = [
     category: 'Discussões de Casos',
     source: 'Grupo WhatsApp - Dr. Ricardo',
     tags: ['PDF', 'Casos Raros', 'Blefaroplastia'],
+    description: 'Discussão aprofundada sobre as melhores práticas para rinoplastia secundária. O foco foi na utilização de enxerto de costela para estruturação e os desafios associados. \n\n### Tópicos Principais:\n* Técnica de colheita do enxerto.\n* Prevenção de warping.\n* Fixação e modelagem.',
   },
   {
     id: 2,
@@ -36,6 +37,7 @@ const initialArchiveItems = [
     category: 'Técnicas Cirúrgicas',
     source: 'Sessão Zoom - Dr. Ana Couto',
     tags: ['Vídeo', 'Deep Neck'],
+    description: 'Gravação da sessão ao vivo com a Dr. Ana Couto, demonstrando a técnica de sutura para o SMAS no lifting facial profundo. Inclui dicas para um resultado natural e duradouro.',
   },
   {
     id: 3,
@@ -43,6 +45,7 @@ const initialArchiveItems = [
     category: 'Pós-Operatório',
     source: 'Documento - Dra. Sofia',
     tags: ['PDF', 'Pós-Op Tardio'],
+    description: 'Documento PDF com o protocolo completo de cuidados para pacientes no pós-operatório de lipoaspiração de alta definição. Abrange desde a primeira semana até 6 meses.',
   },
   {
     id: 4,
@@ -50,6 +53,7 @@ const initialArchiveItems = [
     category: 'Instrumentais',
     source: 'Grupo WhatsApp - Discussão',
     tags: ['Imagem'],
+    description: 'Análise e comparação dos novos bisturis ultrassônicos disponíveis no mercado. Inclui imagens de antes e depois e opiniões de diversos cirurgiões.',
   },
   {
     id: 5,
@@ -57,6 +61,7 @@ const initialArchiveItems = [
     category: 'Filosofia Cirúrgica',
     source: 'Evento Presencial - SP',
     tags: ['Casos Raros'],
+    description: 'Resumo do debate sobre a aplicação e a relevância da proporção áurea no planejamento de cirurgias faciais. Argumentos a favor e contra a sua utilização estrita.',
   },
   {
     id: 6,
@@ -64,6 +69,7 @@ const initialArchiveItems = [
     category: 'Lipoenxertia',
     source: 'Grupo WhatsApp - Dr. Lucas Martins',
     tags: ['Pós-Op Imediato'],
+    description: 'Discussão sobre as técnicas de coleta, processamento e injeção de gordura para lipoenxertia, visando maximizar a viabilidade do enxerto.',
   },
   {
     id: 7,
@@ -71,6 +77,7 @@ const initialArchiveItems = [
     category: 'Marketing Médico',
     source: 'Sessão Zoom - Convidado',
     tags: ['Vídeo'],
+    description: 'Workshop sobre estratégias de marketing digital para cirurgiões plásticos, com foco no uso ético e eficaz do Instagram para atrair pacientes.',
   },
   {
     id: 8,
@@ -78,6 +85,7 @@ const initialArchiveItems = [
     category: 'Literatura',
     source: 'Grupo WhatsApp - Link',
     tags: ['PDF', 'Assimetria', 'Blefaroplastia'],
+    description: 'Link e discussão sobre um artigo fundamental que aborda o diagnóstico e a correção de assimetrias em blefaroplastia superior e inferior.',
   },
   {
     id: 9,
@@ -85,6 +93,7 @@ const initialArchiveItems = [
     category: 'Complicação',
     source: 'Admin',
     tags: ['Hematoma', 'Pós-Op Imediato', 'Cantopexia'],
+    description: 'Guia prático sobre como identificar e manejar um hematoma expansivo no pós-operatório de cantopexia, incluindo protocolo de drenagem.',
   },
 ];
 
@@ -152,6 +161,7 @@ export default function ArchivePage() {
       category: newItemCategory,
       source: `Admin - ${newItemLink ? 'Link' : 'Upload'}`,
       tags: [newItemCategory, ...(newItemLink ? ['Link'] : []), ...(newItemFiles.length > 0 ? ['Anexo'] : [])],
+      description: newItemDescription,
     };
 
     setArchiveItems([newEntry, ...archiveItems]);
@@ -248,7 +258,7 @@ export default function ArchivePage() {
                     </Select>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="description" className="text-white/70">Descrição / O que foi discutido?</Label>
+                    <Label htmlFor="description" className="text-white/70">Descrição / O que foi discutido? (Suporta Markdown)</Label>
                     <Textarea id="description" value={newItemDescription} onChange={e => setNewItemDescription(e.target.value)} className="glass-input text-white/80 min-h-[100px]" />
                   </div>
                    <div className="grid gap-2">
@@ -301,31 +311,33 @@ export default function ArchivePage() {
             const style = categoryStyles[item.category as keyof typeof categoryStyles] || categoryStyles['Discussões de Casos'];
             const Icon = style.icon;
             return (
-                 <GlassCard key={item.id} interactive={true}>
-                    <div className="flex flex-col h-full">
-                        <div className="flex items-start gap-4 mb-4">
-                            <div className={`p-2 rounded-lg bg-white/10 border border-white/10 ${style.color}`}>
-                                <Icon className="w-6 h-6" />
+                <Link key={item.id} href={`/archive/${item.id}`} passHref>
+                    <GlassCard interactive={true} className="h-full">
+                        <div className="flex flex-col h-full">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className={`p-2 rounded-lg bg-white/10 border border-white/10 ${style.color}`}>
+                                    <Icon className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className={`text-sm font-medium ${style.color}`}>{item.category}</p>
+                                    <h3 className="text-base font-medium text-white/90 mt-1">{item.title}</h3>
+                                </div>
                             </div>
-                            <div>
-                                <p className={`text-sm font-medium ${style.color}`}>{item.category}</p>
-                                <h3 className="text-base font-medium text-white/90 mt-1">{item.title}</h3>
+                             <div className="flex flex-wrap gap-2 my-4">
+                                {item.tags.map(tag => (
+                                    <span key={tag} className="px-2 py-1 text-xs rounded-full bg-white/5 text-white/70 border border-white/10">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                            <div className="mt-auto">
+                                <p className="text-xs font-light text-white/50">
+                                    Fonte: {item.source}
+                                </p>
                             </div>
                         </div>
-                         <div className="flex flex-wrap gap-2 my-4">
-                            {item.tags.map(tag => (
-                                <span key={tag} className="px-2 py-1 text-xs rounded-full bg-white/5 text-white/70 border border-white/10">
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="mt-auto">
-                            <p className="text-xs font-light text-white/50">
-                                Fonte: {item.source}
-                            </p>
-                        </div>
-                    </div>
-                </GlassCard>
+                    </GlassCard>
+                </Link>
             )
         }) : (
              <div className="col-span-full">
@@ -339,5 +351,3 @@ export default function ArchivePage() {
     </div>
   );
 }
-
-    
