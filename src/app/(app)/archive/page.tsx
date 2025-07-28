@@ -3,57 +3,75 @@
 import { useState } from 'react';
 import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
-import { Archive, CaseUpper, Presentation } from 'lucide-react';
+import { FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone } from 'lucide-react';
 
 const archiveItems = [
   {
     id: 1,
-    title: 'Discussão de caso raro: Reconstrução de pálpebra com retalho de Tenzel',
-    category: 'Casos Raros',
+    title: 'Análise de caso: Rinoplastia secundária com enxerto de costela',
+    category: 'Discussões de Casos',
     source: 'Grupo WhatsApp - Dr. Ricardo',
-    icon: CaseUpper
   },
   {
     id: 2,
-    title: 'Masterclass: Técnicas de sutura para lifting facial profundo',
-    category: 'Masterclass',
+    title: 'Vídeo: Técnica de sutura para lifting facial profundo',
+    category: 'Técnicas Cirúrgicas',
     source: 'Sessão Zoom - Dr. Ana Couto',
-    icon: Presentation
   },
   {
     id: 3,
-    title: 'Workshop: Uso de preenchedores para contorno mandibular',
-    category: 'Workshop',
-    source: 'Evento Presencial - SP',
-    icon: Archive
+    title: 'Protocolo de cuidados pós-lipoaspiração HD',
+    category: 'Pós-Operatório',
+    source: 'Documento - Dra. Sofia',
   },
   {
     id: 4,
-    title: 'Análise de caso: Rinoplastia secundária com enxerto de costela',
-    category: 'Casos Raros',
-    source: 'Grupo WhatsApp - Dr. Sofia',
-    icon: CaseUpper
+    title: 'Review: Novos Bisturis Ultrassônicos',
+    category: 'Instrumentais',
+    source: 'Grupo WhatsApp - Discussão',
   },
   {
     id: 5,
-    title: 'Masterclass: Abordagem completa da blefaroplastia transconjuntival',
-    category: 'Masterclass',
-    source: 'Sessão Zoom - Dr. Lucas Martins',
-    icon: Presentation
+    title: 'Debate sobre proporção áurea na cirurgia facial',
+    category: 'Filosofia Cirúrgica',
+    source: 'Evento Presencial - SP',
   },
   {
     id: 6,
-    title: 'Revisão de artigo: "Autologous Fat Grafting in Breast Reconstruction"',
-    category: 'Workshop',
-    source: 'Grupo WhatsApp',
-    icon: Archive
+    title: 'Melhores práticas para preparação de Lipoenxerto',
+    category: 'Lipoenxertia',
+    source: 'Grupo WhatsApp - Dr. Lucas Martins',
+  },
+  {
+    id: 7,
+    title: 'Como usar o Instagram para divulgar seus resultados',
+    category: 'Marketing Médico',
+    source: 'Sessão Zoom - Convidado',
+  },
+  {
+    id: 8,
+    title: 'Artigo recomendado: "Autologous Fat Grafting"',
+    category: 'Literatura',
+    source: 'Grupo WhatsApp - Link',
+  },
+  {
+    id: 9,
+    title: 'Comunicado: Próxima reunião sobre o congresso anual',
+    category: 'Comunicados',
+    source: 'Admin',
   },
 ];
 
 const categoryStyles = {
-    'Masterclass': { icon: Presentation, color: 'text-cyan-400' },
-    'Casos Raros': { icon: CaseUpper, color: 'text-purple-400' },
-    'Workshop': { icon: Archive, color: 'text-blue-400' }
+    'Discussões de Casos': { icon: FileText, color: 'text-cyan-400' },
+    'Técnicas Cirúrgicas': { icon: Scissors, color: 'text-purple-400' },
+    'Pós-Operatório': { icon: Bandage, color: 'text-green-400' },
+    'Instrumentais': { icon: Beaker, color: 'text-orange-400' },
+    'Filosofia Cirúrgica': { icon: BrainCircuit, color: 'text-indigo-400' },
+    'Lipoenxertia': { icon: Droplets, color: 'text-pink-400' },
+    'Marketing Médico': { icon: Smartphone, color: 'text-yellow-400' },
+    'Literatura': { icon: BookCopy, color: 'text-blue-400' },
+    'Comunicados': { icon: Megaphone, color: 'text-red-400' },
 };
 
 export default function ArchivePage() {
