@@ -3,7 +3,7 @@
 
 import { GlassCard } from '@/components/shared/glass-card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone, Clock, Eye } from 'lucide-react';
+import { ArrowLeft, Clock, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 // @ts-ignore
@@ -148,7 +148,9 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
                     </div>
                 </div>
 
-                <div className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300">
+                <div 
+                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 max-w-none"
+                >
                     <div dangerouslySetInnerHTML={renderedDescription} />
                 </div>
 
