@@ -65,18 +65,21 @@ export default function DashboardPage() {
       value: '48',
       icon: Users,
       color: 'text-cyan-400',
+      href: '#',
     },
     {
       title: 'Casos em Análise',
       value: '12',
       icon: FileText,
       color: 'text-purple-400',
+      href: '/cases',
     },
     {
       title: 'Artigos Publicados',
       value: '6',
       icon: BookOpen,
       color: 'text-blue-400',
+      href: '/library',
     },
   ];
 
@@ -206,23 +209,18 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="p-6 border-t md:border-t-0 md:border-l border-white/10 w-full md:w-auto">
-                <div className="flex justify-around md:flex-col gap-4 text-center">
-                    <div>
+                <div className="flex justify-around md:flex-row gap-4 text-center">
+                    <div className="w-16">
                         <p className="text-3xl font-semibold text-white">{String(timeLeft.days).padStart(2, '0')}</p>
                         <p className="text-xs text-white/50">DIAS</p>
                     </div>
-                    <div>
+                    <div className="w-16">
                         <p className="text-3xl font-semibold text-white">{String(timeLeft.hours).padStart(2, '0')}</p>
                         <p className="text-xs text-white/50">HORAS</p>
                     </div>
-                    <div>
+                    <div className="w-16">
                         <p className="text-3xl font-semibold text-white">{String(timeLeft.minutes).padStart(2, '0')}</p>
-
                         <p className="text-xs text-white/50">MIN</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl font-semibold text-white">{String(timeLeft.seconds).padStart(2, '0')}</p>
-                        <p className="text-xs text-white/50">SEG</p>
                     </div>
                 </div>
               </div>
@@ -233,17 +231,19 @@ export default function DashboardPage() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stats.map((stat) => (
-          <GlassCard key={stat.title}>
-            <div className="flex items-center space-x-4">
-              <div className={`p-3 rounded-full bg-white/10`}>
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
+          <Link href={stat.href} key={stat.title}>
+            <GlassCard interactive={true}>
+              <div className="flex items-center space-x-4">
+                <div className={`p-3 rounded-full bg-white/10`}>
+                  <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                </div>
+                <div>
+                  <p className="text-sm font-light text-white/70">{stat.title}</p>
+                  <p className="text-4xl font-medium text-white">{stat.value}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-light text-white/70">{stat.title}</p>
-                <p className="text-4xl font-medium text-white">{stat.value}</p>
-              </div>
-            </div>
-          </GlassCard>
+            </GlassCard>
+          </Link>
         ))}
       </div>
 
