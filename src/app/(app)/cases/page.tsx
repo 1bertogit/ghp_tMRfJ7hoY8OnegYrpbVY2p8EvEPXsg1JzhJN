@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video, Upload, X } from 'lucide-react';
+import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video, Upload, X, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
 import { analyzeCase } from '@/ai/flows/analyze-case-flow';
 import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
@@ -210,7 +211,7 @@ export default function CasesPage() {
             <Input
               type="text"
               placeholder="Buscar por título do caso..."
-              className="glass-input h-12 pl-12 text-base w-full"
+              className="glass-input h-12 pl-12 text-base w-full text-white/80"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -337,7 +338,7 @@ export default function CasesPage() {
         {filteredCases.map(c => (
           <Link href={`/cases/${c.id}`} key={c.id}>
             <GlassCard interactive={true} className="p-0 overflow-hidden flex flex-col group h-full">
-              <div className="relative h-48 w-full overflow-hidden">
+              <div className="relative w-full overflow-hidden aspect-video">
                 <Image 
                   src={c.imageUrl} 
                   alt={c.title}
@@ -345,6 +346,11 @@ export default function CasesPage() {
                   className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
                   data-ai-hint={c.imageHint}
                 />
+                 {c.videoCount > 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <PlayCircle className="w-16 h-16 text-white/70" />
+                  </div>
+                )}
                 <div className="absolute top-3 right-3 flex flex-col gap-2">
                    <Badge variant="outline" className={`glass-pane text-xs backdrop-blur-md ${statusColors[c.status]}`}>
                       {c.status}
