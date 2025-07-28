@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, Mail, Bell, Palette, Shield, Star, LogOut } from 'lucide-react';
+import { Camera, Mail, Bell, Palette, Shield, Star, LogOut, Languages } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SettingsPage() {
   return (
@@ -88,7 +89,22 @@ export default function SettingsPage() {
                         <Label htmlFor="dark-mode" className="text-white/80 font-light">Modo Escuro</Label>
                         <Switch id="dark-mode" defaultChecked disabled/>
                     </div>
-                    <p className="text-xs text-white/50 text-center pt-2">Mais opções de tema em breve.</p>
+                    <Separator className="my-2 bg-white/10" />
+                    <div className="space-y-2">
+                      <Label className="text-white/80 font-light flex items-center gap-2">
+                        <Languages className="w-5 h-5" /> Idioma da Interface
+                      </Label>
+                       <Select defaultValue="pt-BR">
+                            <SelectTrigger className="w-full h-11 glass-input text-white/80">
+                                <SelectValue placeholder="Selecione o idioma" />
+                            </SelectTrigger>
+                            <SelectContent className="glass-pane">
+                                <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                                <SelectItem value="en-US">English (USA)</SelectItem>
+                                <SelectItem value="es-ES">Español (España)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                  </div>
             </GlassCard>
 
