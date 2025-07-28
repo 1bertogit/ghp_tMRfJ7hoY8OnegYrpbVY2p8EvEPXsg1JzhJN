@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ const getPageTitle = (pathname: string) => {
     if (pathname.startsWith('/calendar')) return 'Calendário de Eventos';
     if (pathname.startsWith('/classes/')) return 'Aula Gravada';
     if (pathname.startsWith('/classes')) return 'Aulas Gravadas';
+    if (pathname.startsWith('/academy')) return 'Academy';
     if (pathname.startsWith('/settings')) return 'Configurações';
     if (pathname.startsWith('/admin')) return 'Painel Administrativo';
     return 'Dashboard';
@@ -30,6 +32,7 @@ const getPageSubtitle = (pathname: string) => {
     if (pathname.startsWith('/calendar')) return 'Próximas sessões e masterclasses';
     if (pathname.startsWith('/classes/')) return 'Assista, aprenda e interaja';
     if (pathname.startsWith('/classes')) return 'Assista aulas e mentorias';
+    if (pathname.startsWith('/academy')) return 'Cursos e trilhas de aprendizado';
     if (pathname.startsWith('/settings')) return 'Gerencie suas preferências e perfil';
     if (pathname.startsWith('/admin')) return 'Gerenciamento da plataforma';
     return 'Boa noite, Dr. Robério. Este é o seu resumo.';
