@@ -5,14 +5,10 @@ import { useState } from 'react';
 import { GlassCard } from '@/components/shared/glass-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, MessageSquare, Search, Eye, Filter, Star, PlusCircle, Upload } from 'lucide-react';
+import { BookOpen, MessageSquare, Search, Eye, Filter, Star } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { scientificArticles, specialties } from '@/lib/mock-data/library';
 
@@ -29,60 +25,6 @@ export default function LibraryPage() {
   const [articles, setArticles] = useState(scientificArticles);
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('Todos');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Form state for new article
-  const [newArticle, setNewArticle] = useState({
-    title: '',
-    authors: '',
-    journal: '',
-    year: '',
-    abstract: '',
-    specialty: '',
-  });
-  const [newArticleFile, setNewArticleFile] = useState<File | null>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setNewArticle(prev => ({ ...prev, [id]: value }));
-  };
-  
-  const handleSpecialtyChange = (value: string) => {
-    setNewArticle(prev => ({ ...prev, specialty: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-        setNewArticleFile(e.target.files[0]);
-    }
-  };
-
-  const handleAddArticle = () => {
-    // Basic validation
-    if (!newArticle.title || !newArticle.authors || !newArticle.specialty) {
-        // Here you can add a toast notification for the user
-        console.error("Please fill all required fields");
-        return;
-    }
-
-    const newEntry = {
-      id: articles.length + 1,
-      ...newArticle,
-      year: parseInt(newArticle.year, 10) || new Date().getFullYear(),
-      impactFactor: 0, // Placeholder
-      views: 0,
-      discussions: 0,
-      imageUrl: 'https://placehold.co/600x400',
-      imageHint: 'new article',
-    };
-
-    setArticles([newEntry, ...articles]);
-    
-    // Reset form and close dialog
-    setIsDialogOpen(false);
-    setNewArticle({ title: '', authors: '', journal: '', year: '', abstract: '', specialty: '' });
-    setNewArticleFile(null);
-  };
   
   const filteredArticles = articles.filter(article => 
       (article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,86 +46,6 @@ export default function LibraryPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                    <Button className="h-12 w-full md:w-auto px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
-                        <PlusCircle className="w-5 h-5 mr-2" />
-                        Novo Artigo
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="glass-pane max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-white/90 text-2xl font-light">Adicionar Novo Artigo</DialogTitle>
-                        <DialogDescription className="text-white/50 font-extralight pt-1">
-                            Compartilhe conhecimento com a comunidade. Preencha os detalhes e anexe o PDF do artigo.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
-                        <div className="grid gap-2">
-                            <Label htmlFor="title" className="text-white/70">Título do Artigo</Label>
-                            <Input id="title" value={newArticle.title} onChange={handleInputChange} className="glass-input h-11 text-white/80" />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <div className="grid gap-2">
-                                <Label htmlFor="authors" className="text-white/70">Autores</Label>
-                                <Input id="authors" value={newArticle.authors} onChange={handleInputChange} className="glass-input h-11 text-white/80" placeholder="Ex: Dr. John Doe, Dr. Jane Smith" />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="specialty" className="text-white/70">Especialidade Principal</Label>
-                                <Select onValueChange={handleSpecialtyChange} value={newArticle.specialty}>
-                                    <SelectTrigger className="w-full h-11 glass-input text-white/80">
-                                        <SelectValue placeholder="Selecione a especialidade" />
-                                    </SelectTrigger>
-                                    <SelectContent className="glass-pane">
-                                        {specialties.filter(s => s !== 'Todos').map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <div className="grid gap-2">
-                                <Label htmlFor="journal" className="text-white/70">Revista/Journal</Label>
-                                <Input id="journal" value={newArticle.journal} onChange={handleInputChange} className="glass-input h-11 text-white/80" />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="year" className="text-white/70">Ano de Publicação</Label>
-                                <Input id="year" type="number" value={newArticle.year} onChange={handleInputChange} className="glass-input h-11 text-white/80" />
-                            </div>
-                        </div>
-                         <div className="grid gap-2">
-                            <Label htmlFor="abstract" className="text-white/70">Resumo (Abstract)</Label>
-                            <Textarea id="abstract" value={newArticle.abstract} onChange={handleInputChange} className="glass-input text-white/80 min-h-[100px]" />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label className="text-white/70">Arquivo do Artigo (PDF)</Label>
-                          <Input id="file-upload" type="file" onChange={handleFileChange} className="hidden" accept=".pdf" />
-                           <Button asChild variant="outline" className="w-full h-24 border-dashed border-white/20 hover:border-white/40 hover:bg-white/5 transition-colors cursor-pointer">
-                              <label htmlFor="file-upload">
-                                <div className="flex flex-col items-center justify-center gap-2 text-white/50">
-                                  {newArticleFile ? (
-                                    <>
-                                      <BookOpen className="w-6 h-6" />
-                                      <span className="text-sm">{newArticleFile.name}</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Upload className="w-6 h-6" />
-                                      <span className="text-sm">Clique para selecionar ou arraste o PDF</span>
-                                    </>
-                                  )}
-                                </div>
-                              </label>
-                            </Button>
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button onClick={handleAddArticle} className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base">
-                            Adicionar Artigo à Biblioteca
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-           </Dialog>
-
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-sm text-white/70 mr-2">

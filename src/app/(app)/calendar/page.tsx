@@ -6,16 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Video, Users, Calendar as CalendarIcon, Clock, ArrowRight, PlusCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { eventsData, eventTypes, complexities, platforms } from '@/lib/mock-data/calendar';
+import { eventsData } from '@/lib/mock-data/calendar';
 
 const typeColors: { [key: string]: string } = {
   'Masterclass': 'text-cyan-400 border-cyan-400/30 bg-cyan-500/10',
@@ -44,17 +35,7 @@ interface Event {
 export default function CalendarPage() {
   const [events, setEvents] = useState<Event[]>(eventsData);
   const [isClient, setIsClient] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Form State
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState('');
-  const [complexity, setComplexity] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [time, setTime] = useState('19:00');
-
-
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -74,139 +55,8 @@ export default function CalendarPage() {
     });
   };
 
-  const handleAddEvent = () => {
-    if (!title || !type || !complexity || !date || !time || !platform) return;
-
-    const [hours, minutes] = time.split(':').map(Number);
-    const eventDateTime = new Date(date);
-    eventDateTime.setHours(hours, minutes);
-
-    const newEvent: Event = {
-      id: events.length + 1,
-      title,
-      type,
-      complexity,
-      platform,
-      date: eventDateTime.toISOString(),
-      participants: 0,
-    };
-
-    setEvents(prev => [newEvent, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-    
-    // Reset form and close dialog
-    setIsDialogOpen(false);
-    setTitle('');
-    setType('');
-    setComplexity('');
-    setPlatform('');
-    setDate(undefined);
-    setTime('19:00');
-  };
-
   return (
     <div className="w-full">
-      <GlassCard className="mb-8 p-4">
-        <div className="flex items-center justify-between">
-          <p className="text-white/70">Gerencie e visualize os próximos eventos.</p>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-11 px-5 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
-                <PlusCircle className="w-5 h-5 mr-2" />
-                Adicionar Evento
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="glass-pane max-w-xl">
-              <DialogHeader>
-                <DialogTitle className="text-white/90 text-2xl font-light">Novo Evento no Calendário</DialogTitle>
-                <DialogDescription className="text-white/50 font-extralight pt-1">
-                  Preencha os detalhes para agendar uma nova sessão para a comunidade.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-6 py-4">
-                 <div className="grid gap-2">
-                    <Label htmlFor="title" className="text-white/70">Título do Evento</Label>
-                    <Input id="title" value={title} onChange={e => setTitle(e.target.value)} className="glass-input h-11 text-white/80" />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="type" className="text-white/70">Tipo de Evento</Label>
-                      <Select onValueChange={setType} value={type}>
-                        <SelectTrigger className="w-full h-11 glass-input text-white/80">
-                          <SelectValue placeholder="Selecione o tipo" />
-                        </SelectTrigger>
-                        <SelectContent className="glass-pane">
-                          {eventTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                     <div className="grid gap-2">
-                      <Label htmlFor="complexity" className="text-white/70">Complexidade</Label>
-                      <Select onValueChange={setComplexity} value={complexity}>
-                        <SelectTrigger className="w-full h-11 glass-input text-white/80">
-                          <SelectValue placeholder="Selecione o nível" />
-                        </SelectTrigger>
-                        <SelectContent className="glass-pane">
-                          {complexities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                        <Label className="text-white/70">Data</Label>
-                         <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full justify-start text-left font-normal h-11 glass-input",
-                                !date && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {date ? format(date, "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 glass-pane">
-                            <Calendar
-                              mode="single"
-                              selected={date}
-                              onSelect={setDate}
-                              initialFocus
-                              locale={ptBR}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                    </div>
-                     <div className="grid gap-2">
-                        <Label htmlFor="time" className="text-white/70">Horário</Label>
-                        <Input id="time" type="time" value={time} onChange={e => setTime(e.target.value)} className="glass-input h-11 text-white/80" />
-                    </div>
-                  </div>
-                   <div className="grid gap-2">
-                      <Label htmlFor="platform" className="text-white/70">Plataforma</Label>
-                      <Select onValueChange={setPlatform} value={platform}>
-                        <SelectTrigger className="w-full h-11 glass-input text-white/80">
-                          <SelectValue placeholder="Selecione a plataforma" />
-                        </SelectTrigger>
-                        <SelectContent className="glass-pane">
-                          {platforms.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-              </div>
-               <DialogFooter>
-                  <Button onClick={handleAddEvent} className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base">
-                    Agendar Evento
-                  </Button>
-                </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </GlassCard>
-
       <div className="space-y-8">
         {events.map((event) => (
           <GlassCard key={event.id} interactive={false} className="p-0 overflow-hidden !rounded-2xl">
