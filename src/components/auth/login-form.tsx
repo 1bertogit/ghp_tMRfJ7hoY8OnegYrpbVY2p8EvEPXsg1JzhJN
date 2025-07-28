@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,8 +7,9 @@ import { GlassCard } from '@/components/shared/glass-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Waypoints } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import Image from 'next/image';
 
 export function LoginForm() {
   const router = useRouter();
@@ -52,11 +54,10 @@ export function LoginForm() {
   return (
     <GlassCard className="w-[380px] md:w-[420px]">
       <div className="flex flex-col items-center text-center mb-8">
-        <div className="p-3 bg-white/10 rounded-full mb-4 border border-white/10">
-           <Waypoints className="w-8 h-8 text-white/80" />
-        </div>
-        <h1 className="text-2xl font-medium text-white/95">VisionCare Mentorship</h1>
-        <p className="text-sm text-white/50 font-light">Enter the future of medical education.</p>
+        <Image src="https://firebasestorage.googleapis.com/v0/b/visioncare-mentorship.appspot.com/o/logo.png?alt=media&token=362a6353-2292-424a-85c3-636c1e3458ae" alt="Legacy Mentoring Logo" width={80} height={80} />
+        <h1 className="text-3xl font-medium text-white/95 mt-4">Legacy Mentoring</h1>
+        <p className="text-lg text-yellow-200/70 font-light" style={{ fontFamily: "'Dancing Script', cursive" }}>with Dr Robério Brandão</p>
+        <p className="text-sm text-white/50 font-light mt-4">Acesse sua conta para continuar.</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
