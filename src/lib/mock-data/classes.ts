@@ -69,7 +69,7 @@ export const recordedClassesData = [
     specialty: 'Lifting',
     instructor: 'Dr. Ricardo Almeida',
     description: 'Nesta masterclass, o Dr. Ricardo detalha a anatomia do deep plane, as técnicas de dissecção e as estratégias para obter resultados naturais e duradouros no rejuvenescimento facial. A aula inclui vídeos cirúrgicos comentados e uma sessão de Q&A.',
-    videoUrl: '#',
+    videoUrl: 'https://www.youtube.com/embed/wgd_hB3P7s0',
     materials: [
         { title: 'Apresentação (PDF)', url: '#' },
         { title: 'Artigo de Referência', url: '#' },

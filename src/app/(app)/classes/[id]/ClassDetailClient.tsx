@@ -47,9 +47,15 @@ export default function ClassDetailClient({ classData }: ClassDetailClientProps)
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-8">
             <GlassCard className="p-0">
-                 <div className="aspect-video w-full bg-black rounded-t-3xl flex items-center justify-center">
-                    {/* Placeholder for Vimeo/Youtube Player */}
-                    <p className="text-white/50">Video Player Placeholder</p>
+                 <div className="aspect-video w-full bg-black rounded-t-3xl overflow-hidden">
+                    <iframe
+                      src={classData.videoUrl}
+                      title={classData.title}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
                 </div>
                 <div className="p-6">
                     <Badge variant="outline" className={`self-start mb-4 ${specialtyColors[classData.specialty as keyof typeof specialtyColors]}`}>
