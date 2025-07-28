@@ -199,7 +199,7 @@ export default function AcademyPage() {
                 >
                     <CarouselContent className="-ml-4">
                         {section.courses.map((course) => (
-                            <CarouselItem key={course.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 pl-4">
+                            <CarouselItem key={course.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4 pl-4">
                                 <Link href="#" passHref>
                                     <GlassCard interactive={true} className="p-0 overflow-hidden flex flex-col group h-full">
                                         <div className="relative w-full overflow-hidden aspect-video">
@@ -232,5 +232,3 @@ export default function AcademyPage() {
     </div>
   );
 }
-
-    
