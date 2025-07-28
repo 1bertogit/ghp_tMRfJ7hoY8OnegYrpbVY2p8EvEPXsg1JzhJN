@@ -11,6 +11,7 @@ import {
   Calendar,
   Video,
   SlidersHorizontal,
+  Settings,
 } from 'lucide-react';
 
 const navItems = [
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/archive', label: 'Acervo Antigo', icon: Archive },
   { href: '/calendar', label: 'Calendário', icon: Calendar },
   { href: '/classes', label: 'Encontros Gravados', icon: Video },
+  { href: '/settings', label: 'Configurações', icon: Settings },
   { href: '/admin', label: 'Administrativo', icon: SlidersHorizontal },
 ];
 

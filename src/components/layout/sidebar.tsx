@@ -3,7 +3,7 @@
 import { MainNav } from './main-nav';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, Waypoints } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function Sidebar() {
@@ -14,7 +14,7 @@ export function Sidebar() {
       <div className="h-full w-full glass-pane rounded-3xl flex flex-col p-4">
         <header className="flex items-center gap-3 p-2 mb-8">
            <div className="p-2 bg-white/10 rounded-lg border border-white/10">
-                <Settings className="w-6 h-6 text-white/80" />
+                <Waypoints className="w-6 h-6 text-white/80" />
            </div>
           <h1 className="text-xl font-medium text-white/95">VisionCare</h1>
         </header>
