@@ -13,10 +13,10 @@ const managementSections = [
         color: "text-cyan-400",
         actions: [
             { label: "Fila de Aprovação", href: "/admin/approval", count: 3, icon: FileCheck },
-            { label: "Adicionar Novo Artigo", href: "/library", icon: BookOpen },
-            { label: "Submeter Novo Caso", href: "/cases", icon: PlusCircle },
-            { label: "Upload de Aula Gravada", href: "/classes", icon: Video },
-            { label: "Adicionar ao Acervo", href: "/archive", icon: Archive },
+            { label: "Adicionar Novo Artigo", href: "/admin/content/new-article", icon: BookOpen },
+            { label: "Submeter Novo Caso", href: "/admin/content/new-case", icon: PlusCircle },
+            { label: "Upload de Aula Gravada", href: "/admin/content/new-class", icon: Video },
+            { label: "Adicionar ao Acervo", href: "/admin/content/new-archive", icon: Archive },
         ]
     },
     {

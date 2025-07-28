@@ -6,7 +6,6 @@ import { GlassCard } from '@/components/shared/glass-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video, Upload, X, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -36,32 +35,11 @@ const specialtyColors: { [key: string]: string } = {
   'Outros': 'text-gray-400 border-gray-400/30 bg-gray-500/10',
 };
 
-// Helper function to convert file to data URI
-function fileToDataUri(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-
 export default function CasesPage() {
   const [medicalCases, setMedicalCases] = useState<MedicalCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('all');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-
-  // Form state for the new case
-  const [newCaseTitle, setNewCaseTitle] = useState('');
-  const [newCaseSpecialty, setNewCaseSpecialty] = useState('');
-  const [newCaseFiles, setNewCaseFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchCases = async () => {
@@ -85,123 +63,11 @@ export default function CasesPage() {
     fetchCases();
   }, []);
 
-  useEffect(() => {
-    // Create preview URLs for selected files
-    const urls = newCaseFiles.map(file => URL.createObjectURL(file));
-    setPreviewUrls(urls);
-
-    // Cleanup function to revoke URLs
-    return () => {
-      urls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [newCaseFiles]);
-
-
   const filteredCases = medicalCases.filter(c => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (specialtyFilter === 'all' || c.specialty === specialtyFilter)
   );
   
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setNewCaseFiles(prevFiles => [...prevFiles, ...Array.from(event.target.files!)]);
-    }
-  };
-
-  const removeFile = (indexToRemove: number) => {
-    setNewCaseFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
-  };
-
-
-  const handleAddCase = async () => {
-    if (!newCaseTitle || !newCaseSpecialty) return;
-
-    setIsSubmitting(true);
-    setUploadProgress(0);
-
-    try {
-      const uploadedImageUrls: string[] = [];
-      if (newCaseFiles.length > 0) {
-        const progresses = new Array(newCaseFiles.length).fill(0);
-
-        const uploadPromises = newCaseFiles.map((file, index) => {
-          return new Promise<string>((resolve, reject) => {
-            const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-
-            uploadTask.on('state_changed',
-              (snapshot) => {
-                progresses[index] = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                const totalProgress = progresses.reduce((acc, p) => acc + p, 0) / newCaseFiles.length;
-                setUploadProgress(totalProgress);
-              },
-              (error) => {
-                console.error("Upload failed for file:", file.name, error);
-                reject(error);
-              },
-              async () => {
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve(downloadURL);
-              }
-            );
-          });
-        });
-        const urls = await Promise.all(uploadPromises);
-        uploadedImageUrls.push(...urls);
-      }
-
-      const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
-
-      const analysisInput: AnalyzeCaseInput = {
-        title: newCaseTitle,
-        specialty: newCaseSpecialty,
-        imageDataUris: imageDataUris.length > 0 ? imageDataUris : null,
-      };
-      const result = await analyzeCase(analysisInput);
-
-      const newCaseData = {
-        title: newCaseTitle,
-        specialty: newCaseSpecialty,
-        submittedBy: 'Dr. Robério', // Replace with actual user later
-        status: 'Em Análise' as const,
-        imageUrls: uploadedImageUrls,
-        imageHint: 'new case',
-        analysis: result.analysis,
-        videoCount: 0, // Placeholder
-        createdAt: serverTimestamp(),
-      };
-      
-      const docRef = await addDoc(collection(db, "cases"), newCaseData);
-
-      const newCase: MedicalCase = {
-        id: docRef.id,
-        title: newCaseTitle,
-        specialty: newCaseSpecialty,
-        submittedBy: 'Dr. Robério',
-        status: 'Em Análise' as const,
-        imageUrl: uploadedImageUrls[0] || 'https://placehold.co/600x400',
-        imageHint: 'new case',
-        analysis: result.analysis,
-        imageCount: uploadedImageUrls.length,
-        videoCount: 0,
-      };
-
-
-      setMedicalCases([newCase, ...medicalCases]);
-
-    } catch (error) {
-      console.error('Failed to add new case:', error);
-    } finally {
-      setIsSubmitting(false);
-      setUploadProgress(null);
-      setNewCaseTitle('');
-      setNewCaseSpecialty('');
-      setNewCaseFiles([]);
-      setPreviewUrls([]);
-      setIsDialogOpen(false);
-    }
-  };
-
   return (
     <div className="w-full">
       <GlassCard className="mb-8 p-4">
@@ -228,112 +94,6 @@ export default function CasesPage() {
               <SelectItem value="Lifting">Lifting</SelectItem>
             </SelectContent>
           </Select>
-           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-               <Button className="h-12 w-full md:w-auto px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300">
-                <PlusCircle className="w-5 h-5 mr-2" />
-                Novo Caso
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="glass-pane max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle className="text-white/90 text-2xl font-light">Submeter Novo Caso Clínico</DialogTitle>
-                    <DialogDescription className="text-white/50 font-extralight pt-1">
-                        Preencha os detalhes e anexe as imagens do caso. A análise por IA será gerada automaticamente.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-6 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="title" className="text-white/70">Título do Caso</Label>
-                        <Input id="title" value={newCaseTitle} onChange={e => setNewCaseTitle(e.target.value)} className="glass-input h-11 text-white/80" />
-                    </div>
-                    <div className="grid gap-2">
-                         <Label htmlFor="specialty" className="text-white/70">Especialidade</Label>
-                        <Select onValueChange={setNewCaseSpecialty}>
-                            <SelectTrigger className="w-full h-11 glass-input text-white/80">
-                                <SelectValue placeholder="Selecione a especialidade" />
-                            </SelectTrigger>
-                            <SelectContent className="glass-pane">
-                                <SelectItem value="Rinoplastia">Rinoplastia</SelectItem>
-                                <SelectItem value="Mamoplastia">Mamoplastia</SelectItem>
-                                <SelectItem value="Blefaroplastia">Blefaroplastia</SelectItem>
-                                <SelectItem value="Lifting">Lifting</SelectItem>
-                                <SelectItem value="Outros">Outros</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label className="text-white/70">Imagens do Caso</Label>
-                        <Input 
-                            type="file" 
-                            multiple 
-                            ref={fileInputRef} 
-                            onChange={handleFileChange} 
-                            className="hidden" 
-                            accept="image/*"
-                        />
-                        {previewUrls.length > 0 ? (
-                             <div className="p-4 bg-black/20 rounded-xl">
-                                <Carousel>
-                                    <CarouselContent>
-                                        {previewUrls.map((url, index) => (
-                                            <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
-                                                <div className="relative group aspect-square">
-                                                    <Image src={url} alt={`Preview ${index + 1}`} fill className="object-cover rounded-md" />
-                                                    <button 
-                                                        onClick={() => removeFile(index)} 
-                                                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <X className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                            </CarouselItem>
-                                        ))}
-                                    </CarouselContent>
-                                    <CarouselPrevious className="ml-12" />
-                                    <CarouselNext className="mr-12" />
-                                </Carousel>
-                                <Button 
-                                    variant="outline"
-                                    onClick={() => fileInputRef.current?.click()} 
-                                    className="w-full mt-4 h-11 glass-button bg-white/5 hover:bg-white/10"
-                                >
-                                    <PlusCircle className="w-4 h-4 mr-2" />
-                                    Adicionar mais imagens
-                                </Button>
-                             </div>
-                        ) : (
-                             <Button 
-                                variant="outline"
-                                onClick={() => fileInputRef.current?.click()} 
-                                className="w-full h-24 border-dashed border-white/20 hover:border-white/40 hover:bg-white/5 transition-colors"
-                            >
-                                <div className="flex flex-col items-center justify-center gap-2 text-white/50">
-                                    <Upload className="w-6 h-6" />
-                                    <span className="text-sm">Clique para selecionar ou arraste as imagens</span>
-                                </div>
-                            </Button>
-                        )}
-                    </div>
-                    {uploadProgress !== null && (
-                      <div className="space-y-2">
-                          <Label className="text-white/70">Progresso do Upload</Label>
-                          <Progress value={uploadProgress} className="w-full h-2 bg-black/20 [&>div]:bg-cyan-400" />
-                          <p className="text-xs text-white/50 text-right">{Math.round(uploadProgress)}%</p>
-                      </div>
-                    )}
-                </div>
-                <DialogFooter>
-                    <Button 
-                        onClick={handleAddCase} 
-                        className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base"
-                        disabled={isSubmitting || !newCaseTitle || !newCaseSpecialty}
-                    >
-                        {isSubmitting ? (uploadProgress !== null && uploadProgress < 100 ? 'Enviando Arquivos...' : 'Analisando com IA...') : 'Enviar para Análise'}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-           </Dialog>
         </div>
       </GlassCard>
 
