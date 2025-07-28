@@ -75,7 +75,7 @@ export default function DashboardPage() {
       title: 'Novo Caso',
       subtitle: 'Compartilhar experiência',
       icon: PlusCircle,
-      href: '/cases',
+      href: '/admin/content/new-case',
       color: 'text-green-400'
     },
     {
