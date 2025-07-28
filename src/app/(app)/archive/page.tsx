@@ -14,101 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { FileText, Scissors, Bandage, Beaker, BrainCircuit, Droplets, Smartphone, BookCopy, Megaphone, Filter, X, PlusCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
-
-const filterGroups = {
-  'Procedimento': ['Browlift', 'Deep Neck', 'Blefaroplastia', 'Cantopexia'],
-  'Tipo': ['Casos Raros', 'Vídeo', 'PDF', 'Imagem'],
-  'Complicação': ['Edema', 'Hematoma', 'Assimetria'],
-  'Timing': ['Pós-Op Imediato', 'Pós-Op Tardio']
-};
-
-const initialArchiveItems = [
-  {
-    id: 1,
-    title: 'Análise de caso: Rinoplastia secundária com enxerto de costela',
-    category: 'Discussões de Casos',
-    source: 'Grupo WhatsApp - Dr. Ricardo',
-    tags: ['PDF', 'Casos Raros', 'Blefaroplastia'],
-    description: 'Discussão aprofundada sobre as melhores práticas para rinoplastia secundária. O foco foi na utilização de enxerto de costela para estruturação e os desafios associados. \n\n### Tópicos Principais:\n* Técnica de colheita do enxerto.\n* Prevenção de warping.\n* Fixação e modelagem.',
-  },
-  {
-    id: 2,
-    title: 'Vídeo: Técnica de sutura para lifting facial profundo',
-    category: 'Técnicas Cirúrgicas',
-    source: 'Sessão Zoom - Dr. Ana Couto',
-    tags: ['Vídeo', 'Deep Neck'],
-    description: 'Gravação da sessão ao vivo com a Dr. Ana Couto, demonstrando a técnica de sutura para o SMAS no lifting facial profundo. Inclui dicas para um resultado natural e duradouro.',
-  },
-  {
-    id: 3,
-    title: 'Protocolo de cuidados pós-lipoaspiração HD',
-    category: 'Pós-Operatório',
-    source: 'Documento - Dra. Sofia',
-    tags: ['PDF', 'Pós-Op Tardio'],
-    description: 'Documento PDF com o protocolo completo de cuidados para pacientes no pós-operatório de lipoaspiração de alta definição. Abrange desde a primeira semana até 6 meses.',
-  },
-  {
-    id: 4,
-    title: 'Review: Novos Bisturis Ultrassônicos',
-    category: 'Instrumentais',
-    source: 'Grupo WhatsApp - Discussão',
-    tags: ['Imagem'],
-    description: 'Análise e comparação dos novos bisturis ultrassônicos disponíveis no mercado. Inclui imagens de antes e depois e opiniões de diversos cirurgiões.',
-  },
-  {
-    id: 5,
-    title: 'Debate sobre proporção áurea na cirurgia facial',
-    category: 'Filosofia Cirúrgica',
-    source: 'Evento Presencial - SP',
-    tags: ['Casos Raros'],
-    description: 'Resumo do debate sobre a aplicação e a relevância da proporção áurea no planejamento de cirurgias faciais. Argumentos a favor e contra a sua utilização estrita.',
-  },
-  {
-    id: 6,
-    title: 'Melhores práticas para preparação de Lipoenxerto',
-    category: 'Lipoenxertia',
-    source: 'Grupo WhatsApp - Dr. Lucas Martins',
-    tags: ['Pós-Op Imediato'],
-    description: 'Discussão sobre as técnicas de coleta, processamento e injeção de gordura para lipoenxertia, visando maximizar a viabilidade do enxerto.',
-  },
-  {
-    id: 7,
-    title: 'Como usar o Instagram para divulgar seus resultados',
-    category: 'Marketing Médico',
-    source: 'Sessão Zoom - Convidado',
-    tags: ['Vídeo'],
-    description: 'Workshop sobre estratégias de marketing digital para cirurgiões plásticos, com foco no uso ético e eficaz do Instagram para atrair pacientes.',
-  },
-  {
-    id: 8,
-    title: 'Artigo recomendado sobre assimetria em Blefaroplastia',
-    category: 'Literatura',
-    source: 'Grupo WhatsApp - Link',
-    tags: ['PDF', 'Assimetria', 'Blefaroplastia'],
-    description: 'Link e discussão sobre um artigo fundamental que aborda o diagnóstico e a correção de assimetrias em blefaroplastia superior e inferior.',
-  },
-  {
-    id: 9,
-    title: 'Manejo de hematoma pós-Cantopexia',
-    category: 'Complicação',
-    source: 'Admin',
-    tags: ['Hematoma', 'Pós-Op Imediato', 'Cantopexia'],
-    description: 'Guia prático sobre como identificar e manejar um hematoma expansivo no pós-operatório de cantopexia, incluindo protocolo de drenagem.',
-  },
-];
-
-const categories = [
-    'Discussões de Casos',
-    'Técnicas Cirúrgicas',
-    'Pós-Operatório',
-    'Instrumentais',
-    'Filosofia Cirúrgica',
-    'Lipoenxertia',
-    'Marketing Médico',
-    'Literatura',
-    'Comunicados'
-];
-
+import { initialArchiveItems, filterGroups, archiveCategories as categories } from '@/lib/mock-data/archive';
 
 const categoryStyles: { [key: string]: { icon: React.ElementType, color: string } } = {
     'Discussões de Casos': { icon: FileText, color: 'text-cyan-400' },
@@ -162,6 +68,8 @@ export default function ArchivePage() {
       source: `Admin - ${newItemLink ? 'Link' : 'Upload'}`,
       tags: [newItemCategory, ...(newItemLink ? ['Link'] : []), ...(newItemFiles.length > 0 ? ['Anexo'] : [])],
       description: newItemDescription,
+      views: 0,
+      createdAt: new Date().toISOString(),
     };
 
     setArchiveItems([newEntry, ...archiveItems]);

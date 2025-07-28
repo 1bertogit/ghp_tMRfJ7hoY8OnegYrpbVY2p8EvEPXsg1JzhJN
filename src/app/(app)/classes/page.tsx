@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -8,69 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search, PlayCircle, Clock, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const recordedClasses = [
-  {
-    id: 1,
-    title: 'Técnica de Lifting Facial Deep Plane: Do Básico ao Avançado',
-    specialty: 'Lifting',
-    duration: '1h 45min',
-    rating: 4.9,
-    views: '1.2k',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'lecture anatomy'
-  },
-  {
-    id: 2,
-    title: 'Rinoplastia Preservadora: Conceitos e Aplicações Práticas',
-    specialty: 'Rinoplastia',
-    duration: '2h 10min',
-    rating: 5.0,
-    views: '2.5k',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'medical presentation'
-  },
-  {
-    id: 3,
-    title: 'Mamoplastia Híbrida: Implantes e Enxerto de Gordura',
-    specialty: 'Mamoplastia',
-    duration: '1h 30min',
-    rating: 4.8,
-    views: '980',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgery diagram'
-  },
-  {
-    id: 4,
-    title: 'Blefaroplastia: Gerenciando Expectativas e Complicações',
-    specialty: 'Blefaroplastia',
-    duration: '1h 15min',
-    rating: 4.9,
-    views: '850',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'doctor lecture'
-  },
-  {
-    id: 5,
-    title: 'Contorno Corporal Pós-Bariátrica: Desafios e Soluções',
-    specialty: 'Lifting',
-    duration: '2h 30min',
-    rating: 5.0,
-    views: '1.8k',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'medical conference'
-  },
-  {
-    id: 6,
-    title: 'Uso de Fios de Sustentação: Evidências e Técnicas',
-    specialty: 'Outros',
-    duration: '1h 05min',
-    rating: 4.7,
-    views: '720',
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'surgical tools'
-  },
-];
+import { recordedClasses } from '@/lib/mock-data/classes';
 
 export default function ClassesPage() {
   const [searchTerm, setSearchTerm] = useState('');

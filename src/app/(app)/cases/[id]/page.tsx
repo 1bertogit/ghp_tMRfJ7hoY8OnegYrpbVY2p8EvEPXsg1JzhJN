@@ -7,25 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, MessageSquare, User, CheckCircle, FileText, Bot, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { caseDetails, timelineEvents } from '@/lib/mock-data/cases';
 
-// Mock data, to be replaced with real data fetching
-const caseDetails = {
-    id: 1,
-    title: 'Caso Complexo de Rinoplastia Revisional',
-    submittedBy: 'Dr. Ana Couto',
-    submittedAt: '2024-07-28T10:00:00Z',
-    specialty: 'Rinoplastia',
-    status: 'Aprovado',
-    analysis: 'O planejamento pré-operatório foi excelente, com boa escolha do implante. A técnica de inserção dual-plane garantiu um resultado natural e simétrico. Recomendo atenção ao acompanhamento pós-operatório para monitorar a contratura capsular.',
-};
-
-const timelineEvents = [
-    { type: 'submission', user: 'Dr. Ana Couto', timestamp: '2024-07-28T10:00:00Z', description: 'enviou o caso para análise.' },
-    { type: 'analysis', user: 'Dr. Genkit', timestamp: '2024-07-28T10:05:00Z', description: 'concluiu a análise inicial.' },
-    { type: 'comment', user: 'Dr. Lucas Martins', timestamp: '2024-07-28T14:30:00Z', description: 'comentou: "Excelente caso. A abordagem com enxerto de costela parece a mais indicada. Qual a sua opinião sobre o uso de fáscia temporal?"' },
-    { type: 'comment', user: 'Dr. Sofia Ferreira', timestamp: '2024-07-29T09:15:00Z', description: 'comentou: "Concordo com o Dr. Lucas. A fáscia temporal pode ser uma ótima opção para camuflagem e refinamento da ponta nasal."' },
-    { type: 'approval', user: 'Admin', timestamp: '2024-07-29T18:00:00Z', description: 'aprovou o caso para o acervo.' },
-];
 
 const getIconForEvent = (type: string) => {
     switch (type) {
