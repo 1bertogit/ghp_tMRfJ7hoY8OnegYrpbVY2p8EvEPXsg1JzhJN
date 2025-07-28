@@ -111,16 +111,9 @@ function formatDate(dateString: string) {
     });
 }
 
-
-export default function ArchiveDetailPage({ params }: { params: { id: string } }) {
-    const item = initialArchiveItems.find(a => a.id.toString() === params.id);
-    const md = new Remarkable();
-
-    if (!item) {
-        notFound();
-    }
-    
-    const renderedDescription = { __html: md.render(item.description) };
+function ArchiveDetailClient({ item }: { item: typeof initialArchiveItems[0] }) {
+  const md = new Remarkable();
+  const renderedDescription = { __html: md.render(item.description) };
 
   return (
     <div className="w-full">
@@ -149,7 +142,7 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
                 </div>
 
                 <div 
-                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-li:text-white/70 max-w-none"
+                  className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-li:font-extralight prose-li:text-white/70 max-w-none"
                   dangerouslySetInnerHTML={renderedDescription} 
                 />
 
@@ -183,4 +176,14 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
       </div>
     </div>
   );
+}
+
+export default function ArchiveDetailPage({ params }: { params: { id: string } }) {
+    const item = initialArchiveItems.find(a => a.id.toString() === params.id);
+    
+    if (!item) {
+        notFound();
+    }
+    
+    return <ArchiveDetailClient item={item} />;
 }
