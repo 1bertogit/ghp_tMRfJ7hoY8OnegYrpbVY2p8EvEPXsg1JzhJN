@@ -11,7 +11,7 @@ export const GlassCard = ({ children, className, interactive = false }: GlassCar
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-3xl border border-white/10 bg-white/[.04] p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl',
+        'relative overflow-hidden rounded-3xl border border-white/10 bg-white/[.04] p-6 shadow-2xl shadow-black/20',
         'transition-all duration-500 ease-out',
         interactive && 'hover:scale-[1.02] hover:bg-white/[.08] cursor-pointer',
         className
