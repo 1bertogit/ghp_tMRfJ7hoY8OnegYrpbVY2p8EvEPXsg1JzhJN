@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, PlusCircle, Bot } from 'lucide-react';
+import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { analyzeCase } from '@/ai/flows/analyze-case-flow';
 import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
+import { Badge } from '@/components/ui/badge';
 
 const initialMedicalCases = [
   {
@@ -79,6 +80,14 @@ const statusColors: { [key: string]: string } = {
   'Em Análise': 'bg-purple-500/20 text-purple-300 border-purple-400/30',
   'Aprovado': 'bg-green-500/20 text-green-300 border-green-400/30',
   'Requer Revisão': 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30',
+};
+
+const specialtyColors: { [key: string]: string } = {
+  'Rinoplastia': 'text-cyan-400 border-cyan-400/30 bg-cyan-500/10',
+  'Mamoplastia': 'text-pink-400 border-pink-400/30 bg-pink-500/10',
+  'Blefaroplastia': 'text-blue-400 border-blue-400/30 bg-blue-500/10',
+  'Lifting': 'text-orange-400 border-orange-400/30 bg-orange-500/10',
+  'Outros': 'text-gray-400 border-gray-400/30 bg-gray-500/10',
 };
 
 // Helper function to convert image URL to data URI
@@ -190,9 +199,9 @@ export default function CasesPage() {
   return (
     <div className="w-full">
       <header className="mb-8">
-        <h1 className="text-4xl font-light text-white/90 tracking-wider">Casos Médicos</h1>
+        <h1 className="text-4xl font-light text-white/90 tracking-wider">Discussão de Casos</h1>
         <p className="text-lg font-extralight text-white/50 mt-1">
-          Revise, comente e aprove os casos enviados pelos alunos.
+          Revise, comente e colabore em casos clínicos submetidos pela comunidade.
         </p>
       </header>
 
@@ -222,7 +231,7 @@ export default function CasesPage() {
           </Select>
           <Button variant="ghost" className="h-12 w-full md:w-auto px-4 glass-button">
             <SlidersHorizontal className="w-5 h-5 mr-2" />
-            Filtros
+            Filtros Avançados
           </Button>
            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -279,43 +288,64 @@ export default function CasesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredCases.map(c => (
-          <GlassCard key={c.id} interactive={true} className="p-0 overflow-hidden flex flex-col">
+          <GlassCard key={c.id} interactive={true} className="p-0 overflow-hidden flex flex-col group">
             <div className="relative h-48 w-full">
               <Image 
                 src={c.imageUrl} 
                 alt={c.title}
                 fill
                 objectFit="cover"
-                className="opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                className="opacity-70 group-hover:opacity-90 transition-opacity duration-300"
                 data-ai-hint={c.imageHint}
               />
-              <div className="absolute top-4 right-4">
+               <div className="absolute top-4 right-4 z-10">
                 <span className={`text-xs font-medium px-3 py-1 rounded-full border ${statusColors[c.status]}`}>
                   {c.status}
                 </span>
               </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
             </div>
             <div className="p-6 flex flex-col flex-grow">
-              <p className="text-sm font-medium text-cyan-400 mb-1">{c.specialty}</p>
-              <h3 className="text-lg font-medium text-white/90 flex-grow">{c.title}</h3>
-              <p className="text-sm font-light text-white/50 mt-4 mb-4">
+              <div className="flex justify-between items-start mb-2">
+                <Badge variant="outline" className={`${specialtyColors[c.specialty as keyof typeof specialtyColors]}`}>
+                  {c.specialty}
+                </Badge>
+              </div>
+
+              <h3 className="text-lg font-semibold text-white/95 leading-tight flex-grow mb-3">{c.title}</h3>
+              
+              <p className="text-sm font-light text-white/50 mt-auto mb-5">
                 Enviado por: {c.submittedBy}
               </p>
+
               {c.analysis && (
-                <div className="mt-auto pt-4 border-t border-white/10 bg-white/5 p-4 rounded-xl -m-2">
-                   <div className="flex items-center gap-2 mb-2">
-                     <Bot className="w-5 h-5 text-purple-400" />
-                     <p className="text-sm font-medium text-purple-300">Análise do Dr. Genkit</p>
+                <div className="mb-6 mt-auto pt-4 border-t border-white/10 bg-white/[.03] p-4 rounded-xl -mx-2">
+                   <div className="flex items-center gap-3 mb-2">
+                     <div className="p-2 bg-purple-500/10 rounded-full border border-purple-400/20">
+                        <Bot className="w-5 h-5 text-purple-300" />
+                     </div>
+                     <p className="text-sm font-semibold text-purple-300">Análise do Dr. Genkit</p>
                    </div>
                    <p className="text-sm font-extralight text-white/70 leading-relaxed">
                      {c.analysis}
                    </p>
                 </div>
               )}
+
+              <div className="flex items-center gap-2 mt-auto border-t border-white/10 pt-4 -mx-6 px-6">
+                <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                    <MessageSquare className="w-4 h-4 mr-2"/> Comentar
+                </Button>
+                 <Button variant="ghost" className="flex-1 glass-button h-10 text-sm font-normal">
+                    <Bookmark className="w-4 h-4 mr-2"/> Salvar
+                </Button>
+                <Button variant="ghost" size="icon" className="glass-button rounded-full h-10 w-10">
+                    <ArrowRight className="w-4 h-4"/>
+                </Button>
+              </div>
             </div>
           </GlassCard>
         ))}
       </div>
     </div>
   );
-}
