@@ -6,23 +6,25 @@ import { GlassCard } from '@/components/shared/glass-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, GraduationCap, Clock, BarChart2, ArrowRight, PlayCircle, Star, Plus } from 'lucide-react';
+import { Search, GraduationCap, Clock, BarChart2, ArrowRight, PlayCircle, Star, Plus, Info } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const featuredCourse = {
   id: 1,
-  title: 'Browlift & EndomidFace',
-  category: 'TERÇO SUPERIOR E MÉDIO DA FACE',
-  level: 'Iniciante ao Avançado',
-  duration: '44 horas',
-  modules: 5,
-  imageUrl: 'https://placehold.co/1200x675',
-  imageHint: 'facial surgery woman',
-  description: 'Desvende os segredos das cirurgias com cicatrizes reduzidas e escondidas para rejuvenescimento facial. Pela mesma incisão scarless da Frontoplastia é possível elevar toda a estrutura do terço médio. E por isso, este curso oferece uma abordagem única e exclusiva para aprimorar a beleza e a harmonia facial até mesmo em pacientes jovens.',
+  title: 'Master Class: Advanced Rhinoplasty Techniques',
+  category: 'ACADEMY PREMIUM',
+  level: 'Advanced',
+  duration: '12 horas',
+  year: '2024',
+  description: 'Comprehensive 12-hour masterclass covering the most advanced rhinoplasty techniques used by world-renowned surgeons. From primary to revision cases, learn the secrets of achieving natural, beautiful results.',
   rating: 4.9,
-  status: 'Em Andamento',
+  instructor: 'Dr. Robério Santos',
+  students: 1847,
+  price: 'US$ 2.999,00',
+  imageUrl: 'https://placehold.co/1200x675',
+  imageHint: 'rhinoplasty surgery brain',
 };
 
 const courseSections = [
@@ -95,6 +97,7 @@ const courseSections = [
 ]
 
 const categoryColors: { [key: string]: string } = {
+  'ACADEMY PREMIUM': 'text-blue-400 border-blue-400/30 bg-blue-500/10',
   'TERÇO SUPERIOR E MÉDIO DA FACE': 'text-yellow-400 border-yellow-400/30 bg-yellow-500/10',
   'Trilha de Aprendizagem': 'text-purple-400 border-purple-400/30 bg-purple-500/10',
   'Curso': 'text-cyan-400 border-cyan-400/30 bg-cyan-500/10',
@@ -117,31 +120,47 @@ export default function AcademyPage() {
                     data-ai-hint={featuredCourse.imageHint}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-                <div className="absolute inset-0 flex items-center p-8 md:p-12">
-                    <div className="max-w-xl">
-                        <Badge variant="outline" className={`mb-4 ${categoryColors[featuredCourse.category]}`}>
-                            {featuredCourse.category}
-                        </Badge>
-                        <h1 className="text-4xl lg:text-5xl font-bold text-white/95 leading-tight">{featuredCourse.title}</h1>
-                        <p className="mt-4 text-lg text-white/60 font-light leading-relaxed">{featuredCourse.description}</p>
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-white/80">
+                <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-12">
+                    <div className="max-w-2xl">
+                        <div className="flex items-center gap-3">
+                            <GraduationCap className="w-5 h-5 text-blue-400" />
+                            <p className="text-sm font-semibold tracking-wider text-blue-400 uppercase">{featuredCourse.category}</p>
+                        </div>
+                        
+                        <h1 className="text-4xl lg:text-5xl font-bold text-white/95 leading-tight mt-3">{featuredCourse.title}</h1>
+                        
+                         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-white/80">
                             <div className="flex items-center gap-2">
                                 <Star className="w-5 h-5 text-yellow-400" />
                                 <span className="font-medium">{featuredCourse.rating}</span>
                             </div>
-                            <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-400/30">{featuredCourse.status}</Badge>
+                            <span className="text-white/50">{featuredCourse.year}</span>
+                            <Badge variant="outline" className="border-white/20 text-white/80 capitalize">{featuredCourse.level}</Badge>
                             <span>{featuredCourse.duration}</span>
-                            <span>{featuredCourse.modules} Módulos</span>
                         </div>
+
+                        <p className="mt-4 text-lg text-white/60 font-light leading-relaxed">{featuredCourse.description}</p>
+                        
                         <div className="flex items-center gap-4 mt-8">
                              <Button className="h-14 px-8 text-lg glass-button bg-white/20 hover:bg-white/30 text-white">
                                 <PlayCircle className="w-6 h-6 mr-2" />
-                                Continuar Trilha
+                                Assistir Agora
                             </Button>
                              <Button variant="outline" className="h-14 px-8 text-lg glass-button bg-white/5 hover:bg-white/10">
                                 <Plus className="w-6 h-6 mr-2" />
                                 Minha Lista
                             </Button>
+                             <Button variant="outline" className="h-14 px-8 text-lg glass-button bg-white/5 hover:bg-white/10">
+                                <Info className="w-6 h-6 mr-2" />
+                                Mais Informações
+                            </Button>
+                        </div>
+                         <div className="mt-8 text-white/60 text-sm">
+                            <span>Instrutor: <strong className="text-white/80">{featuredCourse.instructor}</strong></span>
+                            <span className="mx-2">•</span>
+                            <span>{featuredCourse.students.toLocaleString('pt-BR')} alunos</span>
+                             <span className="mx-2">•</span>
+                            <span>{featuredCourse.price}</span>
                         </div>
                     </div>
                 </div>
