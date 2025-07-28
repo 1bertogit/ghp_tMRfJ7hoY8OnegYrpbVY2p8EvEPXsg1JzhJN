@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation';
 // @ts-ignore
 import { Remarkable } from 'remarkable';
 
-// Mock data, to be replaced with real data fetching. We will get this from the main page later.
+// Mock data, to be replaced with real data fetching.
 const initialArchiveItems = [
   {
     id: 1,
@@ -103,18 +103,6 @@ const initialArchiveItems = [
   },
 ];
 
-const categoryStyles: { [key: string]: { icon: React.ElementType, color: string } } = {
-    'Discussões de Casos': { icon: FileText, color: 'text-cyan-400' },
-    'Técnicas Cirúrgicas': { icon: Scissors, color: 'text-purple-400' },
-    'Pós-Operatório': { icon: Bandage, color: 'text-green-400' },
-    'Instrumentais': { icon: Beaker, color: 'text-orange-400' },
-    'Filosofia Cirúrgica': { icon: BrainCircuit, color: 'text-indigo-400' },
-    'Lipoenxertia': { icon: Droplets, color: 'text-pink-400' },
-    'Marketing Médico': { icon: Smartphone, color: 'text-yellow-400' },
-    'Literatura': { icon: BookCopy, color: 'text-blue-400' },
-    'Comunicados': { icon: Megaphone, color: 'text-red-400' },
-};
-
 function formatDate(dateString: string) {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -132,9 +120,6 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
         notFound();
     }
     
-    const style = categoryStyles[item.category as keyof typeof categoryStyles] || categoryStyles['Discussões de Casos'];
-    const Icon = style.icon;
-
     const renderedDescription = { __html: md.render(item.description) };
 
   return (
@@ -146,52 +131,51 @@ export default function ArchiveDetailPage({ params }: { params: { id: string } }
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2">
             <GlassCard>
-                 <div className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300">
+                <h1 className="text-3xl font-light text-white/95 mb-4">{item.title}</h1>
+                
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/50 mb-6 pb-6 border-b border-white/10">
+                    <span>Fonte: <strong className="font-medium text-white/70">{item.source}</strong></span>
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4"/>
+                        <span>{formatDate(item.createdAt)}</span>
+                    </div>
+                     <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4"/>
+                        <span>{item.views} visualizações</span>
+                    </div>
+                </div>
+
+                <div className="prose prose-invert prose-p:font-extralight prose-p:text-white/70 prose-headings:font-light prose-headings:text-white/90 prose-strong:text-white/90 prose-a:text-cyan-400 hover:prose-a:text-cyan-300">
                     <div dangerouslySetInnerHTML={renderedDescription} />
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/10">
+                    <h3 className="text-base font-medium text-white/80 mb-3">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {item.tags.map(tag => (
+                            <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-white/10 bg-white/5 border-white/10 text-white/70">
+                                {tag}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
             </GlassCard>
         </div>
 
-        <div>
+        <div className="lg:col-span-1 space-y-8 sticky top-8">
            <GlassCard>
-                <div className="flex items-center gap-4 mb-6">
-                    <div className={`p-2 rounded-lg bg-white/10 border border-white/10 ${style.color}`}>
-                        <Icon className="w-8 h-8" />
-                    </div>
-                    <div>
-                        <p className={`text-base font-medium ${style.color}`}>{item.category}</p>
-                         <h1 className="text-2xl font-light text-white/95">{item.title}</h1>
-                    </div>
+                <h3 className="text-xl font-light text-white/90 mb-4">Conteúdo Relacionado</h3>
+                <div className="text-center py-8">
+                    <p className="text-sm text-white/50">Em breve...</p>
                 </div>
-
-                 <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                        <span className="text-white/60">Fonte:</span>
-                        <span className="font-medium text-white/90">{item.source}</span>
-                    </div>
-                 </div>
-
-                <div className="mt-6 pt-6 border-t border-white/10 text-sm space-y-3">
-                    <div className="flex justify-between">
-                        <span className="text-white/60 flex items-center gap-2"><Clock className="w-4 h-4"/> Adicionado em:</span>
-                        <span className="font-medium text-white/90">{formatDate(item.createdAt)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-white/60 flex items-center gap-2"><Eye className="w-4 h-4"/> Visualizações:</span>
-                        <span className="font-medium text-white/90">{item.views}</span>
-                    </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-white/10">
-                    <h3 className="text-base font-medium text-white/80 mb-3">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {item.tags.map(tag => (
-                            <Badge key={tag} variant="outline" className="bg-white/5 border-white/10 text-white/70">{tag}</Badge>
-                        ))}
-                    </div>
+           </GlassCard>
+            <GlassCard>
+                <h3 className="text-xl font-light text-white/90 mb-4">Discussão</h3>
+                <div className="text-center py-8">
+                    <p className="text-sm text-white/50">Em breve...</p>
                 </div>
            </GlassCard>
         </div>
