@@ -13,18 +13,18 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const featuredCourse = {
   id: 1,
-  title: 'Master Class: Advanced Rhinoplasty Techniques',
-  category: 'ACADEMY PREMIUM',
-  level: 'Advanced',
-  duration: '12 horas',
-  year: '2024',
-  description: 'Comprehensive 12-hour masterclass covering the most advanced rhinoplasty techniques used by world-renowned surgeons. From primary to revision cases, learn the secrets of achieving natural, beautiful results.',
+  title: 'Browlift & EndomidFace',
+  category: 'TERÇO SUPERIOR E MÉDIO DA FACE',
+  level: 'Em Andamento',
+  duration: '44 horas',
+  modules: '5 Módulos',
+  description: 'Desvende os segredos das cirurgias com cicatrizes reduzidas e escondidas para rejuvenescimento facial. Pela mesma incisão scarless da Frontoplastia é possível elevar toda a estrutura do terço médio. E por isso, este curso oferece uma abordagem única e exclusiva para aprimorar a beleza e a harmonia facial até mesmo em pacientes jovens.',
   rating: 4.9,
-  instructor: 'Dr. Robério Santos',
-  students: 1847,
-  price: 'US$ 2.999,00',
+  instructor: 'Dr Robério Brandão',
+  students: 131,
+  price: 'R$8.500,00',
   imageUrl: 'https://placehold.co/1200x675',
-  imageHint: 'rhinoplasty surgery brain',
+  imageHint: 'facial surgery education',
 };
 
 const courseSections = [
@@ -123,8 +123,8 @@ export default function AcademyPage() {
                 <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-12">
                     <div className="max-w-2xl">
                         <div className="flex items-center gap-3">
-                            <GraduationCap className="w-5 h-5 text-blue-400" />
-                            <p className="text-sm font-semibold tracking-wider text-blue-400 uppercase">{featuredCourse.category}</p>
+                            <GraduationCap className="w-5 h-5 text-yellow-400" />
+                            <p className="text-sm font-semibold tracking-wider text-yellow-400 uppercase">{featuredCourse.category}</p>
                         </div>
                         
                         <h1 className="text-4xl lg:text-5xl font-bold text-white/95 leading-tight mt-3">{featuredCourse.title}</h1>
@@ -134,9 +134,9 @@ export default function AcademyPage() {
                                 <Star className="w-5 h-5 text-yellow-400" />
                                 <span className="font-medium">{featuredCourse.rating}</span>
                             </div>
-                            <span className="text-white/50">{featuredCourse.year}</span>
-                            <Badge variant="outline" className="border-white/20 text-white/80 capitalize">{featuredCourse.level}</Badge>
+                            <Badge variant="outline" className="border-green-400/50 text-green-300 capitalize">{featuredCourse.level}</Badge>
                             <span>{featuredCourse.duration}</span>
+                            <span>{featuredCourse.modules}</span>
                         </div>
 
                         <p className="mt-4 text-lg text-white/60 font-light leading-relaxed">{featuredCourse.description}</p>
@@ -158,7 +158,7 @@ export default function AcademyPage() {
                          <div className="mt-8 text-white/60 text-sm">
                             <span>Instrutor: <strong className="text-white/80">{featuredCourse.instructor}</strong></span>
                             <span className="mx-2">•</span>
-                            <span>{featuredCourse.students.toLocaleString('pt-BR')} alunos</span>
+                            <span>{featuredCourse.students.toLocaleString('pt-BR')} Alunos</span>
                              <span className="mx-2">•</span>
                             <span>{featuredCourse.price}</span>
                         </div>
