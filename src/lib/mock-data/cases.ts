@@ -1,6 +1,23 @@
-export const initialMedicalCases = [
+
+export interface MedicalCase {
+  id: string; // Firestore document ID
+  title: string;
+  specialty: string;
+  submittedBy: string;
+  status: 'Em Análise' | 'Aprovado' | 'Requer Revisão';
+  imageUrl?: string; // Could be the first image from imageUrls
+  imageUrls?: string[];
+  imageHint?: string;
+  analysis: string | null;
+  imageCount: number;
+  videoCount: number;
+  createdAt?: any; // Firestore Timestamp
+}
+
+
+export const initialMedicalCases: MedicalCase[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Caso Complexo de Rinoplastia Revisional',
     specialty: 'Rinoplastia',
     submittedBy: 'Dr. Ana Couto',
@@ -12,7 +29,7 @@ export const initialMedicalCases = [
     videoCount: 1,
   },
   {
-    id: 2,
+    id: '2',
     title: 'Mamoplastia de Aumento com Prótese de Silicone',
     specialty: 'Mamoplastia',
     submittedBy: 'Dr. Lucas Martins',
@@ -24,7 +41,7 @@ export const initialMedicalCases = [
     videoCount: 0,
   },
   {
-    id: 3,
+    id: '3',
     title: 'Blefaroplastia Superior e Inferior',
     specialty: 'Blefaroplastia',
     submittedBy: 'Dr. Sofia Ferreira',
@@ -36,7 +53,7 @@ export const initialMedicalCases = [
     videoCount: 0,
   },
   {
-    id: 4,
+    id: '4',
     title: 'Lifting Facial Completo (Ritidoplastia)',
     specialty: 'Lifting',
     submittedBy: 'Dr. Carlos Andrade',
@@ -48,7 +65,7 @@ export const initialMedicalCases = [
     videoCount: 2,
   },
   {
-    id: 5,
+    id: '5',
     title: 'Rinoplastia Estruturada Pós-Trauma',
     specialty: 'Rinoplastia',
     submittedBy: 'Dr. Gabriela Lima',
@@ -60,7 +77,7 @@ export const initialMedicalCases = [
     videoCount: 1,
   },
   {
-    id: 6,
+    id: '6',
     title: 'Reconstrução Mamária Pós-Mastectomia',
     specialty: 'Mamoplastia',
     submittedBy: 'Dr. Pedro Almeida',

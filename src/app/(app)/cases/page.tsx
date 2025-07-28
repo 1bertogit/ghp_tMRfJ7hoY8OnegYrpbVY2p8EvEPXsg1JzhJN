@@ -16,9 +16,11 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Progress } from '@/components/ui/progress';
-import { storage } from '@/lib/firebase';
+import { db, storage } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { initialMedicalCases } from '@/lib/mock-data/cases';
+import { collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "firebase/firestore";
+import type { MedicalCase } from '@/lib/mock-data/cases';
+
 
 const statusColors: { [key: string]: string } = {
   'Em Análise': 'bg-purple-500/20 text-purple-300 border-purple-400/30',
@@ -46,7 +48,8 @@ function fileToDataUri(file: File): Promise<string> {
 
 
 export default function CasesPage() {
-  const [medicalCases, setMedicalCases] = useState(initialMedicalCases);
+  const [medicalCases, setMedicalCases] = useState<MedicalCase[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,6 +62,28 @@ export default function CasesPage() {
   const [newCaseFiles, setNewCaseFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const fetchCases = async () => {
+      setIsLoading(true);
+      try {
+        const casesCollection = collection(db, "cases");
+        const q = query(casesCollection, orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        const casesData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as MedicalCase[];
+        setMedicalCases(casesData);
+      } catch (error) {
+        console.error("Error fetching cases: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCases();
+  }, []);
 
   useEffect(() => {
     // Create preview URLs for selected files
@@ -134,8 +159,22 @@ export default function CasesPage() {
       };
       const result = await analyzeCase(analysisInput);
 
-      const newCase = {
-        id: medicalCases.length + 1,
+      const newCaseData = {
+        title: newCaseTitle,
+        specialty: newCaseSpecialty,
+        submittedBy: 'Dr. Robério', // Replace with actual user later
+        status: 'Em Análise' as const,
+        imageUrls: uploadedImageUrls,
+        imageHint: 'new case',
+        analysis: result.analysis,
+        videoCount: 0, // Placeholder
+        createdAt: serverTimestamp(),
+      };
+      
+      const docRef = await addDoc(collection(db, "cases"), newCaseData);
+
+      const newCase: MedicalCase = {
+        id: docRef.id,
         title: newCaseTitle,
         specialty: newCaseSpecialty,
         submittedBy: 'Dr. Robério',
@@ -146,6 +185,7 @@ export default function CasesPage() {
         imageCount: uploadedImageUrls.length,
         videoCount: 0,
       };
+
 
       setMedicalCases([newCase, ...medicalCases]);
 
@@ -298,12 +338,24 @@ export default function CasesPage() {
       </GlassCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {filteredCases.map(c => (
+        {isLoading ? (
+            Array.from({ length: 3 }).map((_, index) => (
+                <GlassCard key={index} className="p-0 animate-pulse">
+                    <div className="aspect-video bg-white/5"></div>
+                    <div className="p-6">
+                        <div className="h-4 bg-white/10 rounded w-1/4 mb-4"></div>
+                        <div className="h-6 bg-white/10 rounded w-3/4 mb-3"></div>
+                        <div className="h-4 bg-white/10 rounded w-1/2 mb-5"></div>
+                        <div className="h-16 bg-white/5 rounded-xl"></div>
+                    </div>
+                </GlassCard>
+            ))
+        ) : filteredCases.map(c => (
           <Link href={`/cases/${c.id}`} key={c.id}>
             <GlassCard interactive={true} className="p-0 overflow-hidden flex flex-col group h-full">
               <div className="relative w-full overflow-hidden aspect-video">
                 <Image 
-                  src={c.imageUrl} 
+                  src={c.imageUrl || (c.imageUrls && c.imageUrls[0]) || 'https://placehold.co/600x400'} 
                   alt={c.title}
                   fill
                   className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
@@ -320,9 +372,9 @@ export default function CasesPage() {
                     </Badge>
                 </div>
                  <div className="absolute bottom-3 right-3 flex gap-2">
-                  {c.imageCount > 0 && (
+                  {(c.imageCount > 0 || (c.imageUrls && c.imageUrls.length > 0)) && (
                     <Badge variant="outline" className="glass-pane backdrop-blur-md">
-                      <ImageIcon className="w-3 h-3 mr-1.5"/> {c.imageCount}
+                      <ImageIcon className="w-3 h-3 mr-1.5"/> {c.imageUrls?.length || c.imageCount}
                     </Badge>
                   )}
                   {c.videoCount > 0 && (
