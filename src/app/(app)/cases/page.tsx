@@ -171,38 +171,41 @@ export default function CasesPage() {
     try {
         // Step 1: Upload files to Firebase Storage and get their URLs
         const uploadedImageUrls: string[] = [];
-        const totalFiles = newCaseFiles.length;
-        let filesUploaded = 0;
+        if (newCaseFiles.length > 0) {
+            const totalFiles = newCaseFiles.length;
+            let filesUploaded = 0;
 
-        for (const file of newCaseFiles) {
-            const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
+            const uploadPromises = newCaseFiles.map(file => {
+                return new Promise<string>((resolve, reject) => {
+                    const storageRef = ref(storage, `cases/${Date.now()}_${file.name}`);
+                    const uploadTask = uploadBytesResumable(storageRef, file);
 
-            await new Promise<void>((resolve, reject) => {
-                 uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes);
-                        const overallProgress = ((filesUploaded + progress) / totalFiles) * 100;
-                        setUploadProgress(overallProgress);
-                    },
-                    (error) => {
-                        console.error("Upload failed for file:", file.name, error);
-                        reject(error);
-                    },
-                    async () => {
-                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                        uploadedImageUrls.push(downloadURL);
-                        filesUploaded++;
-                        if (filesUploaded === totalFiles) {
-                           setUploadProgress(100);
-                           resolve();
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes);
+                            const overallProgress = ((filesUploaded + progress) / totalFiles) * 100;
+                            setUploadProgress(overallProgress);
+                        },
+                        (error) => {
+                            console.error("Upload failed for file:", file.name, error);
+                            reject(error);
+                        },
+                        async () => {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            filesUploaded++;
+                            if (filesUploaded === totalFiles) {
+                               setUploadProgress(100);
+                            }
+                            resolve(downloadURL);
                         }
-                    }
-                );
+                    );
+                });
             });
+            const urls = await Promise.all(uploadPromises);
+            uploadedImageUrls.push(...urls);
         }
         
-        // Step 2: Get data URIs for AI analysis (can be done in parallel or after)
+        // Step 2: Get data URIs for AI analysis
         const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
         
         // Step 3: Run AI Analysis
