@@ -22,7 +22,7 @@ export default function NewArchiveItemPage() {
                 Esta funcionalidade estará disponível em breve.
             </p>
             <p className="text-sm text-white/50 max-w-lg mx-auto">
-               Esta seção permitirá adicionar manualmente conteúdos diversos ao acervo histórico, como discussões importantes de outras fontes, documentos e links relevantes.
+               Esta seção permitirá adicionar manually conteúdos diversos ao acervo histórico, como discussões importantes de outras fontes, documentos e links relevantes.
             </p>
         </div>
       </GlassCard>
