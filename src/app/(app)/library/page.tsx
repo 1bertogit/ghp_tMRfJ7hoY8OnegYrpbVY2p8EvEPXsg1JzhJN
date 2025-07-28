@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import Link from 'next/link';
 
 
 const scientificArticles = [
@@ -269,66 +270,64 @@ export default function LibraryPage() {
 
       <div className="space-y-8">
         {filteredArticles.map((article) => (
-          <GlassCard key={article.id} interactive={true} className="p-0 overflow-hidden !rounded-2xl group">
-            <div className="flex flex-col md:flex-row">
-              <div className="relative h-48 md:h-auto md:w-64 flex-shrink-0">
-                <Image
-                  src={article.imageUrl}
-                  alt={article.title}
-                  layout="fill"
-                  objectFit="cover"
-                  className="opacity-70 group-hover:opacity-90 transition-opacity duration-300"
-                  data-ai-hint={article.imageHint}
-                />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <Badge variant="outline" className={`self-start mb-3 ${specialtyColors[article.specialty as keyof typeof specialtyColors]}`}>
-                    {article.specialty}
-                </Badge>
-                <h3 className="text-lg font-semibold text-white/95 mb-2">{article.title}</h3>
-                <p className="text-sm font-light text-cyan-300 mb-3">{article.authors}</p>
-                <div className="flex flex-wrap items-center text-xs text-white/50 gap-x-4 gap-y-1 mb-4">
-                    <span>{article.journal} ({article.year})</span>
-                     <div className="flex items-center gap-1.5">
-                        <Star className="w-3 h-3 text-yellow-400" />
-                        <span>Fator de Impacto: {article.impactFactor}</span>
-                    </div>
+          <Link key={article.id} href={`/library/${article.id}`} passHref>
+            <GlassCard interactive={true} className="p-0 overflow-hidden !rounded-2xl group">
+              <div className="flex flex-col md:flex-row">
+                <div className="relative h-48 md:h-auto md:w-64 flex-shrink-0">
+                  <Image
+                    src={article.imageUrl}
+                    alt={article.title}
+                    layout="fill"
+                    objectFit="cover"
+                    className="opacity-70 group-hover:opacity-90 transition-opacity duration-300"
+                    data-ai-hint={article.imageHint}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <Badge variant="outline" className={`self-start mb-3 ${specialtyColors[article.specialty as keyof typeof specialtyColors]}`}>
+                      {article.specialty}
+                  </Badge>
+                  <h3 className="text-lg font-semibold text-white/95 mb-2">{article.title}</h3>
+                  <p className="text-sm font-light text-cyan-300 mb-3">{article.authors}</p>
+                  <div className="flex flex-wrap items-center text-xs text-white/50 gap-x-4 gap-y-1 mb-4">
+                      <span>{article.journal} ({article.year})</span>
+                      <div className="flex items-center gap-1.5">
+                          <Star className="w-3 h-3 text-yellow-400" />
+                          <span>Fator de Impacto: {article.impactFactor}</span>
+                      </div>
+                  </div>
 
-                <p className="text-sm font-extralight text-white/70 leading-relaxed line-clamp-2 mb-4">
-                    {article.abstract}
-                </p>
+                  <p className="text-sm font-extralight text-white/70 leading-relaxed line-clamp-2 mb-4">
+                      {article.abstract}
+                  </p>
 
-                <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex items-center gap-4 text-xs text-white/60">
-                        <div className="flex items-center gap-1.5">
-                            <Eye className="w-4 h-4" />
-                            <span>{article.views}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                            <MessageSquare className="w-4 h-4" />
-                            <span>{article.discussions}</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                       <Button className="glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 px-5 h-10 text-sm">
-                        <BookOpen className="w-4 h-4 mr-2"/>
-                        Ler Artigo
-                       </Button>
-                       <Button variant="ghost" className="glass-button bg-white/5 hover:bg-white/10 px-5 h-10 text-sm">
-                         <MessageSquare className="w-4 h-4 mr-2"/>
-                         Discutir
-                       </Button>
-                    </div>
+                  <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center gap-4 text-xs text-white/60">
+                          <div className="flex items-center gap-1.5">
+                              <Eye className="w-4 h-4" />
+                              <span>{article.views}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                              <MessageSquare className="w-4 h-4" />
+                              <span>{article.discussions}</span>
+                          </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Button asChild className="glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 px-5 h-10 text-sm">
+                          <a><BookOpen className="w-4 h-4 mr-2"/>Ler Artigo</a>
+                        </Button>
+                        <Button asChild variant="ghost" className="glass-button bg-white/5 hover:bg-white/10 px-5 h-10 text-sm">
+                          <a><MessageSquare className="w-4 h-4 mr-2"/>Discutir</a>
+                        </Button>
+                      </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </GlassCard>
+            </GlassCard>
+          </Link>
         ))}
       </div>
     </div>
   );
 }
-
-    
