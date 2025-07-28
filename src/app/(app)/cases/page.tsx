@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GlassCard } from '@/components/shared/glass-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video } from 'lucide-react';
+import { Search, SlidersHorizontal, PlusCircle, Bot, MessageSquare, Bookmark, Share2, Image as ImageIcon, Video, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { analyzeCase } from '@/ai/flows/analyze-case-flow';
 import { AnalyzeCaseInput } from '@/ai/schemas/case-analysis';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const initialMedicalCases = [
   {
@@ -103,50 +104,14 @@ const specialtyColors: { [key: string]: string } = {
   'Outros': 'text-gray-400 border-gray-400/30 bg-gray-500/10',
 };
 
-// Helper function to convert image URL to data URI
-async function toDataUri(url: string): Promise<string | null> {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-        // Attempt to use a proxy for CORS issues
-        const proxyResponse = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
-        if(!proxyResponse.ok) throw new Error(`Failed to fetch image from ${url} and proxy`);
-        
-        const blob = await proxyResponse.blob();
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    }
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.error("Error converting image to data URI:", error);
-    // Fallback or error handling. For simplicity, we return null.
-    // In a real app, you might want to inform the user.
-    try {
-        const proxyResponse = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
-        if(!proxyResponse.ok) throw new Error(`Failed to fetch image from ${url} and proxy`);
-        
-        const blob = await proxyResponse.blob();
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    } catch (proxyError) {
-         console.error("Error converting image to data URI via proxy:", proxyError);
-         return null;
-    }
-  }
+// Helper function to convert file to data URI
+function fileToDataUri(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 
@@ -160,13 +125,37 @@ export default function CasesPage() {
   // Form state for the new case
   const [newCaseTitle, setNewCaseTitle] = useState('');
   const [newCaseSpecialty, setNewCaseSpecialty] = useState('');
-  const [newCaseImageUrl, setNewCaseImageUrl] = useState('');
+  const [newCaseFiles, setNewCaseFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Create preview URLs for selected files
+    const urls = newCaseFiles.map(file => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+
+    // Cleanup function to revoke URLs
+    return () => {
+      urls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [newCaseFiles]);
 
 
   const filteredCases = medicalCases.filter(c => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (specialtyFilter === 'all' || c.specialty === specialtyFilter)
   );
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setNewCaseFiles(prevFiles => [...prevFiles, ...Array.from(event.target.files!)]);
+    }
+  };
+
+  const removeFile = (indexToRemove: number) => {
+    setNewCaseFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  };
+
 
   const handleAddCase = async () => {
     if (!newCaseTitle || !newCaseSpecialty) return;
@@ -174,12 +163,12 @@ export default function CasesPage() {
     setIsAnalyzing(true);
     
     try {
-        const imageDataUri = newCaseImageUrl ? await toDataUri(newCaseImageUrl) : null;
+        const imageDataUris = await Promise.all(newCaseFiles.map(fileToDataUri));
         
         const analysisInput: AnalyzeCaseInput = {
             title: newCaseTitle,
             specialty: newCaseSpecialty,
-            imageDataUri: imageDataUri,
+            imageDataUris: imageDataUris.length > 0 ? imageDataUris : null,
         };
 
         const result = await analyzeCase(analysisInput);
@@ -190,10 +179,10 @@ export default function CasesPage() {
             specialty: newCaseSpecialty,
             submittedBy: 'Dr. Robério', // Assuming the logged-in user
             status: 'Em Análise' as const,
-            imageUrl: newCaseImageUrl || 'https://placehold.co/600x400',
+            imageUrl: previewUrls[0] || 'https://placehold.co/600x400',
             imageHint: 'new case',
             analysis: result.analysis,
-            imageCount: 1,
+            imageCount: newCaseFiles.length,
             videoCount: 0,
         };
 
@@ -206,7 +195,8 @@ export default function CasesPage() {
         // Reset form and close dialog
         setNewCaseTitle('');
         setNewCaseSpecialty('');
-        setNewCaseImageUrl('');
+        setNewCaseFiles([]);
+        setPreviewUrls([]);
         setIsDialogOpen(false);
     }
   };
@@ -248,11 +238,11 @@ export default function CasesPage() {
                 Novo Caso
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass-pane max-w-lg">
+            <DialogContent className="glass-pane max-w-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-white/90 text-2xl font-light">Submeter Novo Caso Clínico</DialogTitle>
                     <DialogDescription className="text-white/50 font-extralight pt-1">
-                        Preencha os detalhes abaixo. O caso será enviado para revisão e análise por IA.
+                        Preencha os detalhes e anexe as imagens do caso. A análise por IA será gerada automaticamente.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-6 py-4">
@@ -276,15 +266,64 @@ export default function CasesPage() {
                         </Select>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="imageUrl" className="text-white/70">URL da Imagem (Opcional)</Label>
-                        <Input id="imageUrl" placeholder="https://..." value={newCaseImageUrl} onChange={e => setNewCaseImageUrl(e.target.value)} className="glass-input h-11" />
+                        <Label className="text-white/70">Imagens do Caso</Label>
+                        <Input 
+                            type="file" 
+                            multiple 
+                            ref={fileInputRef} 
+                            onChange={handleFileChange} 
+                            className="hidden" 
+                            accept="image/*"
+                        />
+                        {previewUrls.length > 0 ? (
+                             <div className="p-4 bg-black/20 rounded-xl">
+                                <Carousel>
+                                    <CarouselContent>
+                                        {previewUrls.map((url, index) => (
+                                            <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
+                                                <div className="relative group aspect-square">
+                                                    <Image src={url} alt={`Preview ${index + 1}`} fill className="object-cover rounded-md" />
+                                                    <button 
+                                                        onClick={() => removeFile(index)} 
+                                                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            </CarouselItem>
+                                        ))}
+                                    </CarouselContent>
+                                    <CarouselPrevious className="ml-12" />
+                                    <CarouselNext className="mr-12" />
+                                </Carousel>
+                                <Button 
+                                    variant="outline"
+                                    onClick={() => fileInputRef.current?.click()} 
+                                    className="w-full mt-4 h-11 glass-button bg-white/5 hover:bg-white/10"
+                                >
+                                    <PlusCircle className="w-4 h-4 mr-2" />
+                                    Adicionar mais imagens
+                                </Button>
+                             </div>
+                        ) : (
+                             <Button 
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()} 
+                                className="w-full h-24 border-dashed border-white/20 hover:border-white/40 hover:bg-white/5 transition-colors"
+                            >
+                                <div className="flex flex-col items-center justify-center gap-2 text-white/50">
+                                    <Upload className="w-6 h-6" />
+                                    <span className="text-sm">Clique para selecionar ou arraste as imagens</span>
+                                </div>
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <DialogFooter>
                     <Button 
                         onClick={handleAddCase} 
                         className="h-12 w-full px-6 glass-button bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-300 text-base"
-                        disabled={isAnalyzing}
+                        disabled={isAnalyzing || !newCaseTitle || !newCaseSpecialty}
                     >
                         {isAnalyzing ? 'Analisando com IA...' : 'Enviar para Análise'}
                     </Button>

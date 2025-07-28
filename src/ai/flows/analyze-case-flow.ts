@@ -40,11 +40,13 @@ const analyzeCasePrompt = ai.definePrompt({
     - Título: {{{title}}}
     - Especialidade: {{{specialty}}}
 
-    {{#if imageDataUri}}
-    - Imagem Anexada: {{media url=imageDataUri}}
-    Use a imagem como referência principal para sua análise.
+    {{#if imageDataUris}}
+      {{#each imageDataUris}}
+        - Imagem Anexada: {{media url=this}}
+      {{/each}}
+      Use as imagens como referência principal para sua análise.
     {{else}}
-    Baseie sua análise apenas no título e na especialidade fornecidos.
+      Baseie sua análise apenas no título e na especialidade fornecidos.
     {{/if}}
 
     Forneça sua análise no campo 'analysis'.

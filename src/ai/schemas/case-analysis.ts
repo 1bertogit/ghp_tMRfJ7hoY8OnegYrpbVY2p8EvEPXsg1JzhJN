@@ -4,7 +4,7 @@ import {z} from 'zod';
 export const AnalyzeCaseInputSchema = z.object({
   title: z.string().describe('The title of the medical case.'),
   specialty: z.string().describe('The medical specialty of the case.'),
-  imageDataUri: z.string().nullable().describe("An optional photo of the case, as a data URI. Format: 'data:<mimetype>;base64,<encoded_data>'."),
+  imageDataUris: z.array(z.string()).nullable().describe("Optional photos of the case, as data URIs. Format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 export type AnalyzeCaseInput = z.infer<typeof AnalyzeCaseInputSchema>;
 
@@ -12,4 +12,4 @@ export type AnalyzeCaseInput = z.infer<typeof AnalyzeCaseInputSchema>;
 export const AnalyzeCaseOutputSchema = z.object({
   analysis: z.string().describe('A brief, expert analysis of the case, written from the perspective of a senior plastic surgeon.'),
 });
-export type AnalyzeCaseOutput = z.infeR<typeof AnalyzeCaseOutputSchema>;
+export type AnalyzeCaseOutput = z.infer<typeof AnalyzeCaseOutputSchema>;
