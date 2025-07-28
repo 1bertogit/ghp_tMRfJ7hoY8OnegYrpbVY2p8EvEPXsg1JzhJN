@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Waypoints } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,20 +24,25 @@ export function LoginForm() {
 
     // Simulate API call
     setTimeout(() => {
-      if (
-        (email === 'admin@mentoria.com' && password === 'admin123') ||
-        (email === 'qualquercoisa@aluno.com' && password === 'aluno123')
-      ) {
+      if (email === 'admin@mentoria.com' && password === 'admin123') {
+        login({ name: 'Dr. Robério', role: 'admin' });
         toast({
-          title: 'Login Successful',
-          description: 'Welcome back!',
+          title: 'Login bem-sucedido',
+          description: 'Bem-vindo(a) de volta!',
+        });
+        router.push('/dashboard');
+      } else if (email === 'qualquercoisa@aluno.com' && password === 'aluno123') {
+        login({ name: 'Aluno Visionário', role: 'student' });
+        toast({
+          title: 'Login bem-sucedido',
+          description: 'Bem-vindo(a) de volta!',
         });
         router.push('/dashboard');
       } else {
         toast({
           variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid email or password.',
+          title: 'Falha no Login',
+          description: 'E-mail ou senha inválidos.',
         });
         setIsLoading(false);
       }
@@ -61,6 +68,7 @@ export function LoginForm() {
             disabled={isLoading}
             className="glass-input h-12 text-base"
             required
+            autoComplete="email"
           />
         </div>
         <div className="space-y-2 relative">
@@ -72,6 +80,7 @@ export function LoginForm() {
             disabled={isLoading}
             className="glass-input h-12 text-base pr-10"
             required
+            autoComplete="current-password"
           />
           <button
             type="button"
@@ -87,7 +96,7 @@ export function LoginForm() {
           disabled={isLoading}
           className="w-full h-12 glass-button text-base font-medium"
         >
-          {isLoading ? 'Authenticating...' : 'Enter Platform'}
+          {isLoading ? 'Autenticando...' : 'Entrar na Plataforma'}
         </Button>
       </form>
     </GlassCard>

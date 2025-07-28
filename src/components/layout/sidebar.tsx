@@ -9,7 +9,12 @@ import { useAuth } from '@/hooks/use-auth';
 
 export function Sidebar() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-[260px] p-4 hidden md:block z-20">
@@ -27,15 +32,15 @@ export function Sidebar() {
             <div className="p-4 bg-white/5 rounded-2xl flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src="https://placehold.co/40x40" alt={user.name} data-ai-hint="doctor portrait" />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src="https://placehold.co/40x40" alt={user?.name || ''} data-ai-hint="doctor portrait" />
+                        <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-medium text-sm text-white/90">{user.name}</p>
-                        <p className="text-xs text-white/50 capitalize">{user.role}</p>
+                        <p className="font-medium text-sm text-white/90">{user?.name}</p>
+                        <p className="text-xs text-white/50 capitalize">{user?.role}</p>
                     </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/10 rounded-full" onClick={() => router.push('/')}>
+                <Button variant="ghost" size="icon" className="text-white/60 hover:text-white hover:bg-white/10 rounded-full" onClick={handleLogout}>
                     <LogOut size={18} />
                 </Button>
             </div>

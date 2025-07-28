@@ -16,6 +16,7 @@ import {
   SlidersHorizontal,
   Settings,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -32,9 +33,23 @@ const adminNavItems = [
     { href: '/admin', label: 'Administrativo', icon: SlidersHorizontal },
 ];
 
+function NavSkeleton() {
+    return (
+        <div className="flex-1 space-y-2 px-2">
+            {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full rounded-lg" />
+            ))}
+        </div>
+    )
+}
+
 export function MainNav() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+      return <NavSkeleton />;
+  }
 
   return (
     <nav className="flex-1 space-y-2 px-2">
