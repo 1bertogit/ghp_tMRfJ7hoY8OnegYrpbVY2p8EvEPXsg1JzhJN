@@ -20,35 +20,42 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (email === 'admin@mentoria.com' && password === 'admin123') {
-        login({ name: 'Dr. Robério', role: 'admin' });
-        toast({
-          title: 'Login bem-sucedido',
-          description: 'Bem-vindo(a) de volta!',
-        });
-        router.push('/dashboard');
-      } else if (email === 'qualquercoisa@aluno.com' && password === 'aluno123') {
-        login({ name: 'Aluno Visionário', role: 'student' });
-        toast({
-          title: 'Login bem-sucedido',
-          description: 'Bem-vindo(a) de volta!',
-        });
-        router.push('/dashboard');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Falha no Login',
-          description: 'E-mail ou senha inválidos.',
-        });
-        setIsLoading(false);
+    try {
+      await login(email, password);
+      toast({
+        title: 'Login bem-sucedido',
+        description: 'Bem-vindo(a) de volta!',
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
+      let errorMessage = 'Ocorreu um erro desconhecido.';
+      if (error.code) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage = 'Nenhum usuário encontrado com este e-mail.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'A senha está incorreta.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'O formato do e-mail é inválido.';
+            break;
+          default:
+            errorMessage = 'E-mail ou senha inválidos.';
+        }
       }
-    }, 1000);
+      toast({
+        variant: 'destructive',
+        title: 'Falha no Login',
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
